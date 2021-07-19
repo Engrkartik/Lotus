@@ -1,0 +1,57 @@
+.pencil{
+    display: inline;
+    width: 100%;
+    padding: -0.75rem 1.5rem;
+    clear: both;
+    font-size: 143%;
+    font-weight: 500;
+    color: #000000;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+.trash{
+    display: inline;
+    width: 100%;
+    padding: -0.75rem 1.5rem;
+    clear: both;
+    font-size: 143%;
+    font-weight: 500;
+    color: #f71b1b;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+
+.breakvisiblename, .breakvisiblesno, .breakvisibleruleno  {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* #brules {
+    background-color: blanchedalmond;
+    padding: 12px;
+} */
+
+/* Break Rule */
+.brhead {
+    display: flex;
+}
+
+.breakbox {
+    padding: 27px;
+    margin-bottom: 19px;
+    background-color: #fff;
+    background-clip: border-box; 
+    border: 2px solid rgb(0 0 0 / 10%);
+    border-radius: .25rem;
+    box-shadow: white;
+    box-shadow: white;
+    box-shadow: 1px 2px 11px 0px #706a6a52;
+}
+
+#request_days {
+   background-color: #ffc7c74a;
+}

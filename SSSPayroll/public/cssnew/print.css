@@ -1,0 +1,6 @@
+ @media print {
+@page {size: landscape}
+ .printing{ display: inline-block; margin-left:-200px;}
+ .content-print {display:block; margin-left:-200px;}
+.header, .sidebar, .main-footer, .notprintable, .dataTables_length, .dataTables_filter, .dataTables_info, .pagination, .not{display:none;}
+ }
