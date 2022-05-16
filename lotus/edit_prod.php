@@ -84,10 +84,10 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
- border-radius: 5px;
+ /* border-radius: 5px;
   cursor: pointer;
   transition: 0.3s;
-}
+} */
 
 .myimg:hover {opacity: 0.7;}
 
@@ -179,8 +179,9 @@ input:checked + .slider:before {
                     $pro_img=mysqli_query($con,"SELECT * FROM `prod_img` WHERE img_id='$prod_img' and aid='$admin_id'");
                     while($r_img=mysqli_fetch_assoc($pro_img))
                       {?>
-                    <img class="myimg" id="<?=$r_img['img_url']?>" src="<?=$r_img['img_url']?>" style="width: 100px;height: 100px;" onclick="imagezoom('<?=$r_img['img_url']?>')">&nbsp;&nbsp;
-                    <i class="fa fa-trash" style="cursor: pointer;" onclick="delete_img('<?=$r_img['img_url']?>')"></i>
+                    <span id="img<?=$r_img['id']?>"><img class="myimg " id="<?=$r_img['img_url']?>" src="<?=$r_img['img_url']?>" style="width: 100px;height: 100px;" onclick="imagezoom('<?=$r_img['img_url']?>')">&nbsp;&nbsp;
+                    <i class="fa fa-trash" style="cursor: pointer;" onclick="delete_img('<?=$r_img['id']?>','<?=$r_img['img_id']?>')"></i>
+                    </span>
                   <?php }?>
                   </div>
                   <div id="imagezoom" class="modal1">
@@ -193,7 +194,7 @@ input:checked + .slider:before {
                   <div class="form-group">
                     <div class="field" >
                       <label>Product Images</label>
-                      <input type="file" class="form-control" id="files" name="files[]" onchange="store_img()" multiple  />
+                      <input type="file" class="form-control" id="files" name="files[]" multiple  />
                     </div>
                   </div>
                   </div>
@@ -319,16 +320,23 @@ input:checked + .slider:before {
                             $set_id=$row['set_id'];
                              $sn=0;
                             $set=mysqli_query($con,"SELECT * FROM `set_details` WHERE set_id='$set_id' and aid='$admin_id'");
+                            if(mysqli_num_rows($set)>1)
+                            {
+                              $cond="";
+                            }else {
+
+                              $cond=$admin_id=='2'?'':"disabled";
+                            }
                             while($chk=mysqli_fetch_assoc($set))
                               {
                             $sum_q=$sum_q + $chk['qty'];
-
+                                
                                 $sn++;?>
                             <tr>
                               <td><?php echo $sn;?></td>
                               <td><?php echo str_replace('_',' ',$chk['color']);?></td>
                               <td><?php echo $chk['size'];?></td>
-                              <td><input type="number" id="sum_qty" onchange="sum()" readonly name="set_qty[]" value="<?=$chk['qty']?>" step="<?=$chk['qty']?>"></td>
+                              <td><input type="number" id="sum_qty" onchange="sum()" name="set_qty[]" value="<?=$chk['qty']?>" <?=$cond?>></td>
                               <td id="price"><?php echo $row['sale_price']."/-";?></td>
 
                             </tr>
@@ -392,6 +400,7 @@ input:checked + .slider:before {
                   <div class="col-md-6">
                     <label>Available Stock Qty(in Pcs)</label>
                     <input type="number" class="form-control" id="avail_qty" readonly="" value="<?=$row['avail_qty']?>">
+                    <input type="hidden" class="form-control" id="qty_ratio" value="<?=$row['qty_ratio']?>">
                   </div>
                 </div>
               </div>
@@ -792,14 +801,17 @@ function save_data() {
   info4();
 var wsp=document.getElementById('sale_price').value;
 var mrp=document.getElementById('mrp').value;
+var avail_qty=document.getElementById('qty_ratio').value;
 // alert("Hello");
+console.log(avail_qty);
 info2();
 info3();
   $.ajax({
     type:'POST',
     url:'set_table.php',
-    data:{'size':JSON.stringify(size),'color':JSON.stringify(color),'mrp':mrp,'wsp':wsp},
+    data:{'size':JSON.stringify(size),'color':JSON.stringify(color),'set_qty':JSON.stringify(set_qty),'mrp':mrp,'wsp':wsp,'avail_qty':avail_qty,'admin':'<?=$admin_id?>'},
     success:function(res) {
+      console.log(res);
       $('#myTable').html(res);
     }
   })
@@ -831,7 +843,7 @@ function final_data(img_id) {
   info3();
   info2();
   info();
-  store_img();
+  // store_img();
   var item=document.getElementById('new_id').value;
   var cat_id=document.getElementById('category').value;
   var discount=document.getElementById('discount').value;
@@ -845,6 +857,7 @@ function final_data(img_id) {
   var set_id='<?=$row["set_id"]?>';
   var att_id='<?=$row["att_id"]?>';
   var pid='<?=$row["id"]?>';
+  // var img_id='<?=$row["img"]?>';
 
   var type="update";
   var admin='<?=$admin_id?>';
@@ -875,6 +888,7 @@ function store_img() {
    }
 }
  function new1(){
+   info4();
 prod = document.getElementById("new_id");
  // alert(color);
 if(color==""){
@@ -882,12 +896,46 @@ if(color==""){
     btnfo.focus();
     return false;
   }
+  wsp = document.getElementById("sale_price");
+  if(wsp.value == "00" || wsp.value==null) {
+    alert("Price should not be empty");
+    wsp.focus();
+    return false;
+}
+if(size[0] == null){
+    alert("Create set First");
+    btnfo.focus();
+    return false;
+  }
+  if(size.includes(null))
+  {
+    alert("Size should not be blank");
+    btnfo.focus();
+    return false;
+  }
+  if(set_qty.includes("0") || set_qty.includes(null))
+  {
+    alert("Quantity should not be zero");
+    btnfo.focus();
+    return false;
+  }
+  
     var src=[]; 
+    console.log(document.getElementById("files").files.length);
+    console.log('<?=$row['img']?>');
       if(document.getElementById("files").files.length == 0)
       {
         loader.style.display='';
         final_data('<?=$row["img"]?>');
       }else{
+        var img_id='<?=$row["img"]?>';
+   var pid='<?=$pid?>';
+   var totalfiles = document.getElementById('files').files.length;
+   for (var index = 0; index < totalfiles; index++) {
+      form_data.append("files[]", document.getElementById('files').files[index]);
+      form_data.append("iid",img_id);
+      form_data.append("pid",pid);
+   }
         $.ajax({
             url: 'update_item_img.php',
             type: 'POST',
@@ -944,18 +992,25 @@ var tt=total*wsp+".00/-";
    $('#total_qty').html(new_t);
    $('#total_price').html(tt);
 }
-function delete_img(str) {
+function delete_img(str,img_id) {
+  // alert(str);
+  if (confirm("Are you sure you want to delete")) {
   var type="img_del";
+  // alert(str);
+  var pid='<?=$pid?>';
   // alert(str);
   $.ajax({
     type:'POST',
     url:'save_item.php',
-    data:{'img_url':str,'type':type},
+    data:{'img_url':str,'type':type,'img_id':img_id},
     success:function(res) {
       // alert(res);
-      window.location.href="edit_prod.php?pid=<?=$pid?>";
+      console.log(res);
+      $('#img'+str).remove();
+      // window.location.href="edit_prod.php?pid=<?=$pid?>";
     }
   });
+  }
 }
 function disable_option(str) {
   // alert(str);

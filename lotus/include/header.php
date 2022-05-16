@@ -1,8 +1,15 @@
 <?php 
 SESSION_START();
+// echo $_SESSION['admin_id'];
+// if($_SESSION['admin_id']=='2')
+// {
+//   header("Location:login.php"); //redirect to index.php
+
+// }
 if(time() - $_SESSION['timestamp'] > 900) { //subtract new timestamp from the old one
     
-    unset($_SESSION['r_id'], $_SESSION['timestamp']);
+    // unset($_SESSION['r_id'], $_SESSION['timestamp'],$_SESSION['admin_id']);
+    session_unset();
     header("Location:login.php"); //redirect to index.php
     // exit;
 } else {

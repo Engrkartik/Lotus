@@ -8,7 +8,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
 $aid=$con->real_escape_string($_POST['admin_id']);
 $cust_id=$con->real_escape_string($_POST['cust_id']);
 $pid=$con->real_escape_string($_POST['p_id']);
-$chk=mysqli_query($con,"SELECT * FROM `wishlist` WHERE cid='$cust_id' and pid='$pid'");
+$chk=mysqli_query($con,"SELECT * FROM `wishlist` WHERE cid='$cust_id' and pid='$pid' and aid='$aid'");
 if(mysqli_num_rows($chk)>0)
 {
  $json = array(

@@ -27,11 +27,11 @@ $size_array=json_decode($size);
 $att_array=json_decode($att);
 $set_qty_array=json_decode($set_qty);
 
-$checkval = mysqli_query($con,"SELECT * FROM `product` WHERE `item_name`= '$item' and status = 'A'");
+$checkval = mysqli_query($con,"SELECT * FROM `product` WHERE `item_name`= '$item' and status = 'A' and aid='$admin'");
 $countrow = mysqli_num_rows($checkval);
 if($countrow<1){
 
-$insert=mysqli_query($con,"INSERT INTO `product`(`aid`,`title`, `item_name`, `cat_id`, `sale_price`,`mrp`, `discount`, `tax`, `avail_qty`,`img`,`date`,`desc`,`brand`, `status`, `remark`) VALUES ('$admin','$title','$item','$cat_id','$wsp','$mrp','$discount','$gst','$qty','$img_id','$dj','$dscrpt','$brand','A','')");
+$insert=mysqli_query($con,"INSERT INTO `product`(`aid`,`title`, `item_name`, `cat_id`, `sale_price`,`mrp`, `discount`, `tax`, `avail_qty`,`img`,`date`,`desc`,`brand`, `status`, `remark`,`qty_ratio`) VALUES ('$admin','$title','$item','$cat_id','$wsp','$mrp','$discount','$gst','$qty','$img_id','$dj','$dscrpt','$brand','A','','$set_qty_array[0]')");
 $lid=mysqli_insert_id($con);
 if($insert)
 {
@@ -183,18 +183,19 @@ else{
 }elseif($_POST['type']=="img_del")
 {
 	$img_url=$_POST['img_url'];
-	$chk=mysqli_query($con,"SELECT * FROM `prod_img` WHERE img_url='$img_url'");
+	$img_id=$_POST['img_id'];
+	$chk=mysqli_query($con,"SELECT * FROM `prod_img` WHERE id='$img_url'");
 	$run=mysqli_fetch_assoc($chk);
-	$img_id=$run['img_id'];
-	$coo=mysqli_query($con,"DELETE FROM `prod_img` WHERE img_url='$img_url'");
+	// $img_id=$run['img_id'];
+	$coo=mysqli_query($con,"DELETE FROM `prod_img` WHERE id='$img_url'");
 	$query=mysqli_query($con,"SELECT * FROM `prod_img` WHERE img_id='$img_id'");
-	if(mysqli_num_rows($query)<1)
+	if(mysqli_num_rows($query)==0 || !($query))
 	{
-		$q_run=mysqli_query($con,"UPDATE `product` SET `img`='' WHERE img='$img_id'");
+		$q_run=mysqli_query($con,"UPDATE `product` SET `img`='' WHERE img='$img_id' and id='$pid'");
 	}
-	if($coo)
-		{unlink($_POST['img_url']);
-	echo "Removed";
-}
+	// if($coo)
+		// {unlink($_POST['img_url']);
+// 	echo "Removed";
+// }
 }
 ?>

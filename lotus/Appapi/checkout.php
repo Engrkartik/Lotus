@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST"){
 
     $mydata1=$_POST['mydata'];
     $myarray=json_decode($mydata1);
-    $chk=mysqli_query($con,"SELECT * FROM `manage_order`");
+    $chk=mysqli_query($con,"SELECT * FROM `manage_order` where aid='$aid'");
     $order_id='LOTUS/2020-21/'.(mysqli_num_rows($chk)+1);
     foreach ($myarray as $value) {
         $qty=$value->qty;

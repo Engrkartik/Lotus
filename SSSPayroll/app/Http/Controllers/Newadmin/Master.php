@@ -323,4 +323,11 @@ class Master extends Controller
             return redirect('/designation-master')->with('success','Updated Successfully..!!');
         }
     }
+
+
+    //new employee master function
+    public function employeeMaster()
+    {
+        return view('newadmin/pages/admin/master/employee_master');
+    }
 }

@@ -42,7 +42,7 @@ if ($out) {
 // CHECK IF FILE HAS BEEN UPLOADED
 if (!$chunks || $chunk == $chunks - 1) {
   rename("{$filePath}.part", $filePath);
-  $insert = mysqli_query($con,"INSERT INTO `banner`(`aid`, `title`, `img`, `date`, `status`, `remark`) VALUES ('1','Video Banner','$url','$dj','A','3')");
+  $insert = mysqli_query($con,"INSERT INTO `banner`(`aid`, `title`, `img`, `date`, `status`, `remark`) VALUES ('$admin_id','Video Banner','$url','$dj','A','3')");
 }
 verbose(1, "Upload OK");
 ?>

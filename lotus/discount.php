@@ -371,11 +371,34 @@ success:function(res)
     var admin_id='<?php echo $admin_id;?>';
     var t_id='<?=$_SESSION["t_id"]?>';
     // alert(t_id);
-// alert(att1.length);
-if(disc_type=="P")
-{
-  disc=disc/100;
-}
+   
+    if(disc_name==""){
+      alert('Discount Name Can not be empty..!!');
+      document.getElementById('disc_name').focus();
+      return false;
+    }
+    if(disc_type=="Select Discount Type")
+    {
+      alert('Select Discount Type..!!');
+      document.getElementById('disc_type').focus();
+      return false;
+    }
+    if(disc==""){
+      alert('Enter Discount..!!');
+      document.getElementById('disc').focus();
+      return false;
+    }
+    if(to_dt=="")
+    {
+      alert('Select To Date..!!');
+      document.getElementById('to_dt').focus();
+      return false;
+    }
+    console.log(disc_name,disc_type,from_dt,to_dt);
+  if(disc_type=="P")
+  {
+    disc=disc/100;
+  }
     $.ajax({
       type:'POST',
       url:'add_disc.php',

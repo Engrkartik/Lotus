@@ -24,13 +24,13 @@ $ocassion=$_POST['oc'];
 $sleeve=$_POST['sleeve'];
 $asc_desc=$_POST['sort'];
 $prev=0;
-$data=null;
+$data=[];
 if($asc_desc=="HTL")
 {
-  $orderby='ORDER BY product.sale_price DESC';
+  $orderby='ORDER BY product.sale_price - disc DESC';
 }elseif($asc_desc=="LTH")
 {
-  $orderby='ORDER BY product.sale_price ASC';
+  $orderby='ORDER BY product.sale_price - disc ASC';
 
 }else{
   $orderby='ORDER BY product.id DESC';
@@ -51,7 +51,7 @@ $disc_id=$value10->disc_id;
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and product.sale_price>='$price_min' GROUP BY product.id $orderby");
 while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -59,10 +59,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -140,7 +140,7 @@ $disc_id=$value10->disc_id;
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and product.sale_price<='$price_max' GROUP BY product.id $orderby");
   while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -148,10 +148,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -226,7 +226,7 @@ $disc_id=$value10->disc_id;
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') GROUP BY product.id $orderby");
   while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -234,10 +234,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -314,7 +314,7 @@ foreach ($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and product.brand='$brand' GROUP BY product.id $orderby");
   while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -322,10 +322,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -403,7 +403,7 @@ foreach ($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and (product.brand='$brand') GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -411,10 +411,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -495,7 +495,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and (product.brand='$brand') and set_details.size='$size' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -503,10 +503,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -594,7 +594,7 @@ foreach($brand_arr as $value) {
 
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -602,10 +602,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -695,7 +695,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.brand='$brand' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -703,10 +703,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -805,7 +805,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -813,10 +813,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -926,7 +926,7 @@ while($run3=mysqli_fetch_assoc($query1))
 while($run=mysqli_fetch_assoc($query2))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -935,9 +935,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -1058,10 +1058,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -1070,9 +1071,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -1205,10 +1206,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -1217,9 +1219,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -1355,10 +1357,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -1367,9 +1370,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -1501,10 +1504,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -1513,9 +1517,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -1647,10 +1651,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -1659,9 +1664,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -1792,10 +1797,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -1804,9 +1810,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -1937,10 +1943,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -1949,9 +1956,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -2081,10 +2088,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -2093,9 +2101,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -2225,10 +2233,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -2237,9 +2246,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -2369,10 +2378,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -2381,9 +2391,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -2513,10 +2523,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -2525,9 +2536,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -2657,10 +2668,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -2669,9 +2681,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -2800,10 +2812,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -2812,9 +2825,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -2943,10 +2956,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -2955,9 +2969,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -3086,10 +3100,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -3098,9 +3113,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -3229,10 +3244,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -3241,9 +3257,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -3372,10 +3388,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -3384,9 +3401,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -3515,10 +3532,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -3527,9 +3545,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -3657,10 +3675,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -3669,9 +3688,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -3800,10 +3819,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -3812,9 +3832,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -3942,10 +3962,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -3954,9 +3975,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -4084,10 +4105,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -4096,9 +4118,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -4226,10 +4248,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -4238,9 +4261,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -4367,10 +4390,11 @@ while($run=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -4379,9 +4403,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -4506,10 +4530,11 @@ while($run3=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -4518,9 +4543,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -4646,10 +4671,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -4658,9 +4684,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -4785,10 +4811,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -4797,9 +4824,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -4924,10 +4951,11 @@ while($run=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -4936,9 +4964,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -5061,10 +5089,11 @@ while($run=mysqli_fetch_assoc($query4))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -5073,9 +5102,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -5196,10 +5225,11 @@ while($run=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -5208,9 +5238,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -5331,10 +5361,11 @@ while($run=mysqli_fetch_assoc($query4))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -5343,9 +5374,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -5466,10 +5497,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -5478,9 +5510,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -5610,10 +5642,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -5622,9 +5655,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -5753,10 +5786,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -5765,9 +5799,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -5896,10 +5930,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -5908,9 +5943,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -6039,10 +6074,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -6051,9 +6087,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -6182,10 +6218,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -6194,9 +6231,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -6325,10 +6362,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -6337,9 +6375,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -6468,10 +6506,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -6480,9 +6519,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -6611,10 +6650,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -6623,9 +6663,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -6754,10 +6794,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -6766,9 +6807,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -6897,10 +6938,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -6909,9 +6951,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7040,10 +7082,11 @@ while($run=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -7052,9 +7095,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7182,10 +7225,11 @@ while($run3=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -7194,9 +7238,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7324,10 +7368,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -7336,9 +7381,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7466,10 +7511,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -7478,9 +7524,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7608,10 +7654,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -7620,9 +7667,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7750,10 +7797,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -7762,9 +7810,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7892,10 +7940,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -7904,9 +7953,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8034,10 +8083,11 @@ while($run4=mysqli_fetch_assoc($query4))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -8046,9 +8096,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8176,10 +8226,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -8188,9 +8239,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8270,7 +8321,7 @@ foreach ($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.brand='$brand') GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -8278,10 +8329,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8362,7 +8413,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and  (product.brand='$brand') and set_details.size='$size' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -8370,10 +8421,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8461,7 +8512,7 @@ foreach($brand_arr as $value) {
 
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -8469,10 +8520,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8562,7 +8613,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.brand='$brand' and product.cat_id='$cat_id' AND product.avail_qty>0 and  set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -8570,10 +8621,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8673,7 +8724,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and  set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -8681,10 +8732,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8794,7 +8845,7 @@ while($run3=mysqli_fetch_assoc($query1))
 while($run=mysqli_fetch_assoc($query2))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -8803,9 +8854,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8899,7 +8950,7 @@ $disc_id=$value10->disc_id;
 while($run=mysqli_fetch_assoc($query1))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -8908,9 +8959,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8995,7 +9046,7 @@ foreach ($color_arr as $value3) {
 while($run=mysqli_fetch_assoc($query1))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -9004,9 +9055,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9099,10 +9150,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -9111,9 +9163,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9217,10 +9269,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -9229,9 +9282,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9346,10 +9399,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -9358,9 +9412,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9486,10 +9540,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -9498,9 +9553,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9632,10 +9687,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -9644,9 +9700,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9736,7 +9792,7 @@ foreach ($color_arr as $value3) {
 while($run=mysqli_fetch_assoc($query1))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -9745,9 +9801,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9831,10 +9887,11 @@ foreach ($color_arr as $value3) {
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -9843,9 +9900,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9939,10 +9996,11 @@ foreach ($color_arr as $value3) {
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -9951,9 +10009,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10057,10 +10115,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -10069,9 +10128,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10189,10 +10248,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -10201,9 +10261,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10332,10 +10392,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -10344,9 +10405,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10436,10 +10497,11 @@ $disc_id=$value10->disc_id;
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -10448,9 +10510,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10538,10 +10600,11 @@ $disc_id=$value10->disc_id;
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -10550,9 +10613,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10654,10 +10717,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -10666,9 +10730,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10782,10 +10846,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -10794,9 +10859,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10922,10 +10987,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -10934,9 +11000,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -11026,10 +11092,11 @@ $disc_id=$value10->disc_id;
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -11038,9 +11105,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -11135,10 +11202,11 @@ while($run1=mysqli_fetch_assoc($query1))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' and product.id='$pid' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -11147,9 +11215,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -11257,10 +11325,11 @@ while($run1=mysqli_fetch_assoc($query1))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' and product.id='$pid' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -11269,9 +11338,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -11391,10 +11460,11 @@ while($run1=mysqli_fetch_assoc($query1))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' and product.id='$pid' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -11403,9 +11473,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -11497,10 +11567,11 @@ $disc_id=$value10->disc_id;
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='OCCASION' and prod_attribute.attribute='$ocassion' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -11509,9 +11580,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -11609,10 +11680,11 @@ while($run3=mysqli_fetch_assoc($query3))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='OCCASION' and prod_attribute.attribute='$ocassion' and product.id='$pid' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -11621,9 +11693,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -11734,10 +11806,11 @@ while($run3=mysqli_fetch_assoc($query3))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='OCCASION' and prod_attribute.attribute='$ocassion' and product.id='$pid' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -11746,9 +11819,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -11841,10 +11914,11 @@ $disc_id=$value10->disc_id;
   
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='SLEEVES' and prod_attribute.attribute='$sleeve' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -11853,9 +11927,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -11957,10 +12031,11 @@ while($run4=mysqli_fetch_assoc($query4))
   
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='SLEEVES' and prod_attribute.attribute='$sleeve' and product.id='$pid' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -11969,9 +12044,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -12053,10 +12128,11 @@ $disc_id=$value10->disc_id;
     $type=str_replace(' ','_',$value8->Sub_att);
 
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='TYPE' and prod_attribute.attribute='$type' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -12065,9 +12141,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -12140,10 +12216,11 @@ $disc_id=$value10->disc_id;
   {
     $cat_id=$value9->id;
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -12152,9 +12229,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -12227,7 +12304,7 @@ if(($price_min>=0) and ($price_max<1) and ($brand=="") and ($size=="") and ($col
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and product.sale_price>='$price_min' GROUP BY product.id $orderby");
 while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -12235,10 +12312,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -12313,7 +12390,7 @@ if($prev==$pid)
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and product.sale_price<='$price_max' GROUP BY product.id $orderby");
   while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -12321,10 +12398,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -12396,7 +12473,7 @@ elseif(($price_min>=0) and ($price_max>0) and ($brand=="") and ($size=="") and (
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') GROUP BY product.id $orderby");
   while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -12404,10 +12481,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -12481,7 +12558,7 @@ foreach ($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and product.brand='$brand' GROUP BY product.id $orderby");
   while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -12489,10 +12566,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -12566,7 +12643,7 @@ foreach ($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and (product.brand='$brand') GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -12574,10 +12651,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -12655,7 +12732,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and (product.brand='$brand') and set_details.size='$size' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -12663,10 +12740,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -12751,7 +12828,7 @@ foreach($brand_arr as $value) {
 
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -12759,10 +12836,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -12849,7 +12926,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.brand='$brand' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -12857,10 +12934,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -12956,7 +13033,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -12964,10 +13041,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -13074,7 +13151,7 @@ while($run3=mysqli_fetch_assoc($query1))
 while($run=mysqli_fetch_assoc($query2))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -13083,9 +13160,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -13202,10 +13279,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -13214,9 +13292,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -13346,10 +13424,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -13358,9 +13437,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -13493,10 +13572,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -13505,9 +13585,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -13636,10 +13716,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -13648,9 +13729,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -13779,10 +13860,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -13791,9 +13873,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -13921,10 +14003,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -13933,9 +14016,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -14063,10 +14146,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -14075,9 +14159,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -14204,10 +14288,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -14216,9 +14301,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -14345,10 +14430,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -14357,9 +14443,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -14486,10 +14572,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -14498,9 +14585,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -14627,10 +14714,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -14639,9 +14727,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -14768,10 +14856,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -14780,9 +14869,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -14908,10 +14997,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -14920,9 +15010,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -15048,10 +15138,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -15060,9 +15151,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -15188,10 +15279,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -15200,9 +15292,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -15328,10 +15420,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -15340,9 +15433,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -15468,10 +15561,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -15480,9 +15574,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -15608,10 +15702,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -15620,9 +15715,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -15747,10 +15842,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -15759,9 +15855,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -15887,10 +15983,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -15899,9 +15996,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -16026,10 +16123,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -16038,9 +16136,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -16165,10 +16263,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -16177,9 +16276,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -16304,10 +16403,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -16316,9 +16416,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -16442,10 +16542,11 @@ while($run=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -16454,9 +16555,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -16578,10 +16679,11 @@ while($run3=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -16590,9 +16692,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -16715,10 +16817,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -16727,9 +16830,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -16851,10 +16954,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -16863,9 +16967,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -16987,10 +17091,11 @@ while($run=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -16999,9 +17104,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -17121,10 +17226,11 @@ while($run=mysqli_fetch_assoc($query4))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -17133,9 +17239,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -17253,10 +17359,11 @@ while($run=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -17265,9 +17372,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -17385,10 +17492,11 @@ while($run=mysqli_fetch_assoc($query4))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -17397,9 +17505,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -17517,10 +17625,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -17529,9 +17638,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -17658,10 +17767,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -17670,9 +17780,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -17798,10 +17908,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -17810,9 +17921,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -17938,10 +18049,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -17950,9 +18062,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -18078,10 +18190,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -18090,9 +18203,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -18218,10 +18331,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -18230,9 +18344,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -18358,10 +18472,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -18370,9 +18485,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -18498,10 +18613,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -18510,9 +18626,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -18637,10 +18753,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -18649,9 +18766,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -18776,10 +18893,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -18788,9 +18906,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -18916,10 +19034,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -18928,9 +19047,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -19056,10 +19175,11 @@ while($run=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -19068,9 +19188,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -19195,10 +19315,11 @@ while($run3=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -19207,9 +19328,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -19334,10 +19455,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -19346,9 +19468,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -19473,10 +19595,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -19485,9 +19608,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -19612,10 +19735,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -19624,9 +19748,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -19751,10 +19875,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -19763,9 +19888,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -19890,10 +20015,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -19902,9 +20028,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -20029,10 +20155,11 @@ while($run4=mysqli_fetch_assoc($query4))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -20041,9 +20168,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -20168,10 +20295,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -20180,9 +20308,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -20259,7 +20387,7 @@ foreach ($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and (product.brand='$brand') GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -20267,10 +20395,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -20348,7 +20476,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and  (product.brand='$brand') and set_details.size='$size' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -20356,10 +20484,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -20444,7 +20572,7 @@ foreach($brand_arr as $value) {
 
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -20452,10 +20580,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -20542,7 +20670,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.brand='$brand' and product.cat_id='$cat_id' AND product.avail_qty>0 and  set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -20550,10 +20678,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -20650,7 +20778,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and  set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -20658,10 +20786,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -20768,7 +20896,7 @@ while($run3=mysqli_fetch_assoc($query1))
 while($run=mysqli_fetch_assoc($query2))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -20777,9 +20905,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -20870,7 +20998,7 @@ $cat_arr1=json_decode($cat_id);
 while($run=mysqli_fetch_assoc($query1))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -20879,9 +21007,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -20963,7 +21091,7 @@ foreach ($color_arr as $value3) {
 while($run=mysqli_fetch_assoc($query1))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -20972,9 +21100,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -21064,10 +21192,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -21076,9 +21205,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -21179,10 +21308,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -21191,9 +21321,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -21305,10 +21435,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -21317,9 +21448,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -21442,10 +21573,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -21454,9 +21586,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -21584,10 +21716,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -21596,9 +21729,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -21684,7 +21817,7 @@ foreach ($color_arr as $value3) {
 while($run=mysqli_fetch_assoc($query1))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -21693,9 +21826,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -21775,10 +21908,11 @@ foreach ($color_arr as $value3) {
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -21787,9 +21921,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -21880,10 +22014,11 @@ foreach ($color_arr as $value3) {
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -21892,9 +22027,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -21995,10 +22130,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -22007,9 +22143,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -22124,10 +22260,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -22136,9 +22273,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -22264,10 +22401,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -22276,9 +22414,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -22365,10 +22503,11 @@ $cat_arr1=json_decode($cat_id);
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -22377,9 +22516,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -22464,10 +22603,11 @@ $cat_arr1=json_decode($cat_id);
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -22476,9 +22616,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -22577,10 +22717,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -22589,9 +22730,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -22702,10 +22843,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -22714,9 +22856,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -22839,10 +22981,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -22851,9 +22994,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -22940,10 +23083,11 @@ $cat_arr1=json_decode($cat_id);
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -22952,9 +23096,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -23046,10 +23190,11 @@ while($run1=mysqli_fetch_assoc($query1))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' and product.id='$pid' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -23058,9 +23203,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -23165,10 +23310,11 @@ while($run1=mysqli_fetch_assoc($query1))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' and product.id='$pid' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -23177,9 +23323,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -23295,10 +23441,11 @@ while($run1=mysqli_fetch_assoc($query1))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' and product.id='$pid' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -23307,9 +23454,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -23398,10 +23545,11 @@ $cat_arr1=json_decode($cat_id);
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='OCCASION' and prod_attribute.attribute='$ocassion' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -23410,9 +23558,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -23506,10 +23654,11 @@ while($run3=mysqli_fetch_assoc($query3))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='OCCASION' and prod_attribute.attribute='$ocassion' and product.id='$pid' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -23518,9 +23667,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -23627,10 +23776,11 @@ while($run3=mysqli_fetch_assoc($query3))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='OCCASION' and prod_attribute.attribute='$ocassion' and product.id='$pid' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -23639,9 +23789,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -23730,10 +23880,11 @@ $cat_arr1=json_decode($cat_id);
   
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='SLEEVES' and prod_attribute.attribute='$sleeve' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -23742,9 +23893,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -23841,10 +23992,11 @@ while($run4=mysqli_fetch_assoc($query4))
   
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='SLEEVES' and prod_attribute.attribute='$sleeve' and product.id='$pid' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -23853,9 +24005,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -23933,10 +24085,11 @@ $cat_arr1=json_decode($cat_id);
     $type=str_replace(' ','_',$value8->Sub_att);
 
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  and prod_attribute.sub_cat='TYPE' and prod_attribute.attribute='$type' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -23945,9 +24098,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -24017,10 +24170,11 @@ $cat_arr1=json_decode($cat_id);
   {
     $cat_id=$value9->id;
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') and product.aid='$admin_id' and product.status='A' and product.cat_id='$cat_id' AND product.avail_qty>0  GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -24029,9 +24183,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -24102,7 +24256,7 @@ $disc_id=$value10->disc_id;
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and product.sale_price>='$price_min' GROUP BY product.id $orderby");
 while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -24110,10 +24264,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -24187,7 +24341,7 @@ $disc_id=$value10->disc_id;
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and product.sale_price<='$price_max' GROUP BY product.id $orderby");
   while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -24195,10 +24349,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -24269,7 +24423,7 @@ $disc_id=$value10->disc_id;
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') GROUP BY product.id $orderby");
   while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -24277,10 +24431,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -24353,7 +24507,7 @@ foreach ($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and product.brand='$brand' GROUP BY product.id $orderby");
   while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -24361,10 +24515,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -24437,7 +24591,7 @@ foreach ($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and (product.brand='$brand') GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -24445,10 +24599,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -24525,7 +24679,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and (product.brand='$brand') and set_details.size='$size' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -24533,10 +24687,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -24620,7 +24774,7 @@ foreach($brand_arr as $value) {
 
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -24628,10 +24782,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -24717,7 +24871,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.brand='$brand'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -24725,10 +24879,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -24823,7 +24977,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -24831,10 +24985,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -24940,7 +25094,7 @@ while($run3=mysqli_fetch_assoc($query1))
 while($run=mysqli_fetch_assoc($query2))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -24949,9 +25103,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -25067,10 +25221,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -25079,9 +25234,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -25210,10 +25365,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -25222,9 +25378,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -25356,10 +25512,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -25368,9 +25525,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -25498,10 +25655,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -25510,9 +25668,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -25640,10 +25798,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -25652,9 +25811,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -25781,10 +25940,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -25793,9 +25953,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -25922,10 +26082,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -25934,9 +26095,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -26062,10 +26223,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -26074,9 +26236,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -26202,10 +26364,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -26214,9 +26377,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -26342,10 +26505,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -26354,9 +26518,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -26482,10 +26646,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -26494,9 +26659,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -26622,10 +26787,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -26634,9 +26800,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -26761,10 +26927,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -26773,9 +26940,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -26900,10 +27067,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -26912,9 +27080,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -27039,10 +27207,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -27051,9 +27220,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -27178,10 +27347,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -27190,9 +27360,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -27317,10 +27487,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -27329,9 +27500,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -27456,10 +27627,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -27468,9 +27640,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -27594,10 +27766,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -27606,9 +27779,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -27733,10 +27906,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -27745,9 +27919,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -27871,10 +28045,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -27883,9 +28058,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -28009,10 +28184,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -28021,9 +28197,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -28147,10 +28323,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -28159,9 +28336,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -28284,10 +28461,11 @@ while($run=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -28296,9 +28474,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -28419,10 +28597,11 @@ while($run3=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -28431,9 +28610,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -28555,10 +28734,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -28567,9 +28747,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -28690,10 +28870,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -28702,9 +28883,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -28825,10 +29006,11 @@ while($run=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -28837,9 +29019,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -28958,10 +29140,11 @@ while($run=mysqli_fetch_assoc($query4))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -28970,9 +29153,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -29089,10 +29272,11 @@ while($run=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -29101,9 +29285,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -29220,10 +29404,11 @@ while($run=mysqli_fetch_assoc($query4))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -29232,9 +29417,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -29351,10 +29536,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -29363,9 +29549,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -29491,10 +29677,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -29503,9 +29690,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -29630,10 +29817,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -29642,9 +29830,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -29769,10 +29957,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -29781,9 +29970,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -29908,10 +30097,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -29920,9 +30110,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -30047,10 +30237,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -30059,9 +30250,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -30186,10 +30377,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -30198,9 +30390,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -30325,10 +30517,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -30337,9 +30530,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -30463,10 +30656,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -30475,9 +30669,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -30601,10 +30795,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -30613,9 +30808,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -30740,10 +30935,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -30752,9 +30948,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -30879,10 +31075,11 @@ while($run=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -30891,9 +31088,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -31017,10 +31214,11 @@ while($run3=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -31029,9 +31227,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -31155,10 +31353,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -31167,9 +31366,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -31293,10 +31492,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -31305,9 +31505,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -31431,10 +31631,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -31443,9 +31644,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -31569,10 +31770,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -31581,9 +31783,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -31707,10 +31909,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -31719,9 +31922,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -31845,10 +32048,11 @@ while($run4=mysqli_fetch_assoc($query4))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -31857,9 +32061,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -31983,10 +32187,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -31995,9 +32200,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -32073,7 +32278,7 @@ foreach ($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and (product.brand='$brand') GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -32081,10 +32286,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -32161,7 +32366,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and  (product.brand='$brand') and set_details.size='$size' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -32169,10 +32374,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -32256,7 +32461,7 @@ foreach($brand_arr as $value) {
 
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -32264,10 +32469,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -32353,7 +32558,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A' and product.brand='$brand'  AND product.avail_qty>0 and  set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -32361,10 +32566,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -32460,7 +32665,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and  set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -32468,10 +32673,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -32577,7 +32782,7 @@ while($run3=mysqli_fetch_assoc($query1))
 while($run=mysqli_fetch_assoc($query2))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -32586,9 +32791,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -32678,7 +32883,7 @@ $disc_id=$value10->disc_id;
 while($run=mysqli_fetch_assoc($query1))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -32687,9 +32892,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -32770,7 +32975,7 @@ foreach ($color_arr as $value3) {
 while($run=mysqli_fetch_assoc($query1))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -32779,9 +32984,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -32870,10 +33075,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -32882,9 +33088,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -32984,10 +33190,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -32996,9 +33203,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -33109,10 +33316,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -33121,9 +33329,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -33245,10 +33453,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -33257,9 +33466,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -33386,10 +33595,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -33398,9 +33608,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -33485,7 +33695,7 @@ foreach ($color_arr as $value3) {
 while($run=mysqli_fetch_assoc($query1))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -33494,9 +33704,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -33575,10 +33785,11 @@ foreach ($color_arr as $value3) {
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -33587,9 +33798,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -33679,10 +33890,11 @@ foreach ($color_arr as $value3) {
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -33691,9 +33903,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -33793,10 +34005,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -33805,9 +34018,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -33921,10 +34134,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -33933,9 +34147,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -34060,10 +34274,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -34072,9 +34287,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -34160,10 +34375,11 @@ $disc_id=$value10->disc_id;
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -34172,9 +34388,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -34258,10 +34474,11 @@ $disc_id=$value10->disc_id;
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -34270,9 +34487,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -34370,10 +34587,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -34382,9 +34600,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -34494,10 +34712,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -34506,9 +34725,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -34630,10 +34849,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -34642,9 +34862,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -34730,10 +34950,11 @@ $disc_id=$value10->disc_id;
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -34742,9 +34963,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -34835,10 +35056,11 @@ while($run1=mysqli_fetch_assoc($query1))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' and product.id='$pid' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -34847,9 +35069,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -34953,10 +35175,11 @@ while($run1=mysqli_fetch_assoc($query1))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' and product.id='$pid' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -34965,9 +35188,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -35082,10 +35305,11 @@ while($run1=mysqli_fetch_assoc($query1))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' and product.id='$pid' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -35094,9 +35318,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -35184,10 +35408,11 @@ $disc_id=$value10->disc_id;
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  and prod_attribute.sub_cat='OCCASION' and prod_attribute.attribute='$ocassion' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -35196,9 +35421,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -35291,10 +35516,11 @@ while($run3=mysqli_fetch_assoc($query3))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  and prod_attribute.sub_cat='OCCASION' and prod_attribute.attribute='$ocassion' and product.id='$pid' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -35303,9 +35529,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -35411,10 +35637,11 @@ while($run3=mysqli_fetch_assoc($query3))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  and prod_attribute.sub_cat='OCCASION' and prod_attribute.attribute='$ocassion' and product.id='$pid' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -35423,9 +35650,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -35513,10 +35740,11 @@ $disc_id=$value10->disc_id;
   
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  and prod_attribute.sub_cat='SLEEVES' and prod_attribute.attribute='$sleeve' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -35525,9 +35753,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -35623,10 +35851,11 @@ while($run4=mysqli_fetch_assoc($query4))
   
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  and prod_attribute.sub_cat='SLEEVES' and prod_attribute.attribute='$sleeve' and product.id='$pid' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -35635,9 +35864,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -35714,10 +35943,11 @@ $disc_id=$value10->disc_id;
     $type=str_replace(' ','_',$value8->Sub_att);
 
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  and prod_attribute.sub_cat='TYPE' and prod_attribute.attribute='$type' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -35726,9 +35956,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -35797,10 +36027,11 @@ foreach($disc_arr as $value10)
 {
 $disc_id=$value10->disc_id;
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and disc_id='$disc_id') and product.aid='$admin_id' and product.status='A'  AND product.avail_qty>0  GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -35809,9 +36040,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -35878,7 +36109,7 @@ if(($price_min>=0) and ($price_max<1) and ($brand=="") and ($size=="") and ($col
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and product.sale_price>='$price_min' GROUP BY product.id $orderby");
 while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -35886,10 +36117,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -35954,7 +36185,7 @@ if($prev==$pid)
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and product.sale_price<='$price_max' GROUP BY product.id $orderby");
   while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -35962,10 +36193,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -36030,7 +36261,7 @@ elseif(($price_min>=0) and ($price_max>0) and ($brand=="") and ($size=="") and (
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') GROUP BY product.id $orderby");
   while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -36038,10 +36269,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -36108,7 +36339,7 @@ foreach ($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and product.brand='$brand' GROUP BY product.id $orderby");
   while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -36116,10 +36347,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -36187,7 +36418,7 @@ foreach ($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and (product.brand='$brand') GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -36195,10 +36426,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -36269,7 +36500,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and (product.brand='$brand') and set_details.size='$size' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -36277,10 +36508,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -36358,7 +36589,7 @@ foreach($brand_arr as $value) {
 
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -36366,10 +36597,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -36449,7 +36680,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' and product.brand='$brand' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -36457,10 +36688,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -36549,7 +36780,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -36557,10 +36788,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -36660,7 +36891,7 @@ while($run3=mysqli_fetch_assoc($query1))
 while($run=mysqli_fetch_assoc($query2))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -36669,9 +36900,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -36782,10 +37013,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -36794,9 +37026,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -36919,10 +37151,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -36931,9 +37164,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -37059,10 +37292,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -37071,9 +37305,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -37195,10 +37429,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -37207,9 +37442,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -37330,10 +37565,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -37342,9 +37578,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -37465,10 +37701,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -37477,9 +37714,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -37599,10 +37836,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -37611,9 +37849,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -37733,10 +37971,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -37745,9 +37984,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -37867,10 +38106,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -37879,9 +38119,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -38001,10 +38241,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -38013,9 +38254,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -38135,10 +38376,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -38147,9 +38389,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -38269,10 +38511,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -38281,9 +38524,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -38402,10 +38645,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -38414,9 +38658,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -38535,10 +38779,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -38547,9 +38792,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -38668,10 +38913,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -38680,9 +38926,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -38801,10 +39047,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -38813,9 +39060,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -38934,10 +39181,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -38946,9 +39194,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -39067,10 +39315,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -39079,9 +39328,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -39199,10 +39448,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -39211,9 +39461,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -39332,10 +39582,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -39344,9 +39595,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -39464,10 +39715,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -39476,9 +39728,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -39596,10 +39848,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -39608,9 +39861,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -39728,10 +39981,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -39740,9 +39994,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -39859,10 +40113,11 @@ while($run=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -39871,9 +40126,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -39988,10 +40243,11 @@ while($run3=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -40000,9 +40256,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -40117,10 +40373,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -40129,9 +40386,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -40246,10 +40503,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -40258,9 +40516,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -40375,10 +40633,11 @@ while($run=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -40387,9 +40646,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -40502,10 +40761,11 @@ while($run=mysqli_fetch_assoc($query4))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -40514,9 +40774,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -40627,10 +40887,11 @@ while($run=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -40639,9 +40900,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -40752,10 +41013,11 @@ while($run=mysqli_fetch_assoc($query4))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -40764,9 +41026,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -40877,10 +41139,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -40889,9 +41152,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -41011,10 +41274,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -41023,9 +41287,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -41144,10 +41408,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -41156,9 +41421,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -41277,10 +41542,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -41289,9 +41555,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -41411,10 +41677,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -41423,9 +41690,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -41545,10 +41812,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -41557,9 +41825,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -41678,10 +41946,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -41690,9 +41959,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -41811,10 +42080,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -41823,9 +42093,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -41944,10 +42214,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -41956,9 +42227,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -42077,10 +42348,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -42089,9 +42361,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -42210,10 +42482,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.size='$size' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -42222,9 +42495,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -42343,10 +42616,11 @@ while($run=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -42355,9 +42629,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -42475,10 +42749,11 @@ while($run3=mysqli_fetch_assoc($query3))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -42487,9 +42762,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -42607,10 +42882,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -42619,9 +42895,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -42739,10 +43015,11 @@ while($run1=mysqli_fetch_assoc($query1))
 //  {
 //   $fabric=str_replace(' ','_',$value4->Sub_att);
 //   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
-// while($run=mysqli_fetch_assoc($query))
+// $data=[];
+while($run=mysqli_fetch_assoc($query))
 // {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -42751,9 +43028,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -42871,10 +43148,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -42883,9 +43161,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -43003,10 +43281,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -43015,9 +43294,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -43135,10 +43414,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -43147,9 +43427,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -43267,10 +43547,11 @@ while($run4=mysqli_fetch_assoc($query4))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -43279,9 +43560,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -43399,10 +43680,11 @@ while($run3=mysqli_fetch_assoc($query3))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.sale_price>='$price_min' and product.sale_price<='$price_max') and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -43411,9 +43693,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -43483,7 +43765,7 @@ foreach ($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and (product.brand='$brand') GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -43491,10 +43773,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -43565,7 +43847,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and  (product.brand='$brand') and set_details.size='$size' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -43573,10 +43855,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -43654,7 +43936,7 @@ foreach($brand_arr as $value) {
 
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -43662,10 +43944,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -43745,7 +44027,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' and product.brand='$brand' AND product.avail_qty>0 and  set_details.size='$size' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -43753,10 +44035,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -43845,7 +44127,7 @@ foreach($brand_arr as $value) {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and  set_details.size='$size' and product.brand='$brand' and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
    while ($run=mysqli_fetch_assoc($query)) {
    $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -43853,10 +44135,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -43956,7 +44238,7 @@ while($run3=mysqli_fetch_assoc($query1))
 while($run=mysqli_fetch_assoc($query2))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -43965,9 +44247,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -44051,7 +44333,7 @@ $ocassion_arr=json_decode($ocassion);
 while($run=mysqli_fetch_assoc($query1))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -44060,9 +44342,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -44137,7 +44419,7 @@ foreach ($color_arr as $value3) {
 while($run=mysqli_fetch_assoc($query1))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -44146,9 +44428,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -44231,10 +44513,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -44243,9 +44526,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -44339,10 +44622,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -44351,9 +44635,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -44458,10 +44742,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -44470,9 +44755,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -44588,10 +44873,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -44600,9 +44886,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -44724,10 +45010,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0 and  set_details.size='$size'  and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -44736,9 +45023,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -44818,7 +45105,7 @@ foreach ($color_arr as $value3) {
 while($run=mysqli_fetch_assoc($query1))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -44827,9 +45114,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -44903,10 +45190,11 @@ foreach ($color_arr as $value3) {
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -44915,9 +45203,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -45001,10 +45289,11 @@ foreach ($color_arr as $value3) {
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -45013,9 +45302,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -45110,10 +45399,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -45122,9 +45412,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -45232,10 +45522,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -45244,9 +45535,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -45366,10 +45657,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0   and set_details.color='$color' and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -45378,9 +45670,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -45460,10 +45752,11 @@ $fabric_arr=json_decode($fabric);
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -45472,9 +45765,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -45552,10 +45845,11 @@ $pattern_arr=json_decode($pattern);
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -45564,9 +45858,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -45659,10 +45953,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -45671,9 +45966,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -45779,10 +46074,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -45791,9 +46087,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -45911,10 +46207,11 @@ while($run1=mysqli_fetch_assoc($query1))
  {
   $fabric=str_replace(' ','_',$value4->Sub_att);
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  and prod_attribute.sub_cat='FABRIC' and prod_attribute.attribute='$fabric' and product.id='$pid' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -45923,9 +46220,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -46005,10 +46302,11 @@ $pattern_arr=json_decode($pattern);
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -46017,9 +46315,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -46105,10 +46403,11 @@ while($run1=mysqli_fetch_assoc($query1))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' and product.id='$pid' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -46117,9 +46416,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -46217,10 +46516,11 @@ while($run1=mysqli_fetch_assoc($query1))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' and product.id='$pid' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -46229,9 +46529,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -46342,10 +46642,11 @@ while($run1=mysqli_fetch_assoc($query1))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  and prod_attribute.sub_cat='PATTERN' and prod_attribute.attribute='$pattern' and product.id='$pid' GROUP BY product.id $orderby");
   
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -46354,9 +46655,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -46438,10 +46739,11 @@ $ocassion_arr=json_decode($ocassion);
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  and prod_attribute.sub_cat='OCCASION' and prod_attribute.attribute='$ocassion' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -46450,9 +46752,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -46541,10 +46843,11 @@ while($run3=mysqli_fetch_assoc($query3))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  and prod_attribute.sub_cat='OCCASION' and prod_attribute.attribute='$ocassion' and product.id='$pid' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -46553,9 +46856,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -46657,10 +46960,11 @@ while($run3=mysqli_fetch_assoc($query3))
 
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  and prod_attribute.sub_cat='OCCASION' and prod_attribute.attribute='$ocassion' and product.id='$pid' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -46669,9 +46973,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -46754,10 +47058,11 @@ $sleeve_arr=json_decode($sleeve);
   
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  and prod_attribute.sub_cat='SLEEVES' and prod_attribute.attribute='$sleeve' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -46766,9 +47071,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -46861,10 +47166,11 @@ while($run4=mysqli_fetch_assoc($query4))
   
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  and prod_attribute.sub_cat='SLEEVES' and prod_attribute.attribute='$sleeve' and product.id='$pid' GROUP BY product.id $orderby");
 
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -46873,9 +47179,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -46951,10 +47257,11 @@ $type_arr=json_decode($type);
     $type=str_replace(' ','_',$value8->Sub_att);
 
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  and prod_attribute.sub_cat='TYPE' and prod_attribute.attribute='$type' GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -46963,9 +47270,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -47026,12 +47333,14 @@ if(mysqli_num_rows($m_query2)>0)
 }
 elseif(($price_min<1) and ($price_max<1) and ($brand=="") and ($size=="") and ($color=="") and ($fabric=="") and ($pattern=="") and ($ocassion=="") and ($sleeve=="") and ($type==""))
 {
+  $data=[];
 
      $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  GROUP BY product.id $orderby");
+$data=[];
 while($run=mysqli_fetch_assoc($query))
 {
   $img_id=$run['img'];
-$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id'");
+$img_query=mysqli_query($con,"SELECT img_url FROM `prod_img` WHERE `img_id` = '$img_id' and aid='$admin_id'");
 $img = [];
 while($row2=mysqli_fetch_assoc($img_query))
 {
@@ -47040,9 +47349,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -47093,7 +47402,8 @@ if(mysqli_num_rows($m_query2)>0)
                  "size"=>$size_r,
                   "set_qty"=>$qty,
                   "mrp"=>($run['mrp']==null)?'0':$run['mrp'],
-                  "in_cart"=>$in_cart
+                  "in_cart"=>$in_cart,
+                  "quey"=>"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img LEFT JOIN set_details ON set_details.set_id=product.set_id LEFT JOIN prod_attribute ON prod_attribute.att_id=product.att_id WHERE product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today') AND product.aid='$admin_id' and product.status='A' AND product.avail_qty>0  GROUP BY product.id $orderby"
 
               );
     $prev=$pid;

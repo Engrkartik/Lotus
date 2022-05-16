@@ -27,7 +27,7 @@ else{
 		
 	}
 
-	$get = mysqli_query($con,"SELECT * FROM `banner` WHERE title = 'Discount Banner' and status = 'A'");
+	$get = mysqli_query($con,"SELECT * FROM `banner` WHERE title = 'Discount Banner' and status = 'A' and aid='$admin'");
 	$countget = mysqli_num_rows($get);
 	$find = mysqli_fetch_array($get);
 	$idi = $find['id'];
@@ -42,7 +42,7 @@ else{
 		}
 	}
 	else{
-		$update = mysqli_query($con,"UPDATE `banner` SET `img`='$loc',`date`='$dj' WHERE id = '$idi'");
+		$update = mysqli_query($con,"UPDATE `banner` SET `img`='$loc',`date`='$dj' WHERE id = '$idi' and aid='$admin'");
 		if($update){
 			echo 1;
 		}

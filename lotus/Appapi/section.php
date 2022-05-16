@@ -11,7 +11,7 @@ $query = mysqli_query($con,"SELECT product_order.*,product.item_name,product.sal
 
 $query2 = mysqli_query($con,"SELECT product_order.*,product.item_name,product.sale_price,product.feature as prod_feature,product.new as prod_new_arrival,product.set_id,product.att_id,product.desc,product.brand,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,product.mrp,product.tax  FROM `product_order` LEFT JOIN product ON product.id=product_order.pid WHERE product.aid='$admin_id' and product.new='Y' and product.status='A' and product_order.new!='0' order by product_order.new asc");
 $query3=mysqli_query($con,"SELECT detail_order.design_no,product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,product.mrp,product.tax FROM `detail_order` LEFT JOIN product on product.id=detail_order.design_no WHERE cid='$cust_id' AND detail_order.aid='$admin_id' and product.status='A' order BY detail_order.id desc LIMIT 10");
-$query4=mysqli_query($con,"SELECT category.* FROM `category` WHERE aid='$admin_id'");
+$query4=mysqli_query($con,"SELECT category.* FROM `category` WHERE aid='$admin_id' and status='A'");
  
 
 while($run = mysqli_fetch_assoc($query)){
@@ -20,7 +20,7 @@ while($run = mysqli_fetch_assoc($query)){
   $pid=$run['pid'];
   $qty=0;
  
-  $img=mysqli_query($con,"SELECT * FROM `prod_img` LEFT JOIN product ON product.img=prod_img.img_id WHERE product.id='$pid'");
+  $img=mysqli_query($con,"SELECT * FROM `prod_img` LEFT JOIN product ON product.img=prod_img.img_id WHERE product.id='$pid' and prod_img.aid='$admin_id'");
   while ($row=mysqli_fetch_assoc($img)) {
     $img_arr[] = array('img_url' =>$row['img_url'],'img_id'=>$row['img_id']);
         $thubmail=$row['img_url'];
@@ -31,7 +31,7 @@ $pid=$run['pid'];
 $set_id=$run['set_id'];
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row1=mysqli_fetch_assoc($chk2))
   {
   $color[]=str_replace('_',' ',$row1['color']);
@@ -54,6 +54,17 @@ if(mysqli_num_rows($m_query2)>0)
 {
   $in_cart="No";
 }
+if($run['disc_type']=='A')
+  {
+    $discc=$run['disc'];
+  }elseif($run['disc_type']=='P')
+  {
+    $discc=$run['sale_price']*$run['disc'];
+  }
+  else
+  {
+    $discc='0';
+  }
     $data[] =array("id"=>$run['id'],
                   "pid"=>$run['pid'],
                   "feature_order"=>$run['feature'],
@@ -75,7 +86,7 @@ if(mysqli_num_rows($m_query2)>0)
                   "color"=>$color,
                   "size"=>$size,
                 "set_qty"=>$qty,
-                "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+                "discount"=>$discc,
                 "disc_type"=>$run['disc_type'],
                 "brand"=>$run['brand'],
                 "mrp"=>($run['mrp']==null)?'0':$run['mrp'],"in_cart"=>$in_cart
@@ -89,7 +100,7 @@ while($run2 = mysqli_fetch_assoc($query2)){
   $color2=[];
   $qty2=0;
 
-  $img2=mysqli_query($con,"SELECT * FROM `prod_img` LEFT JOIN product ON product.img=prod_img.img_id WHERE product.id='$pid'");
+  $img2=mysqli_query($con,"SELECT * FROM `prod_img` LEFT JOIN product ON product.img=prod_img.img_id WHERE product.id='$pid' and prod_img.aid='$admin_id'");
   while ($row2=mysqli_fetch_assoc($img2)) {
     $img_arr2[] = array('img_url' =>$row2['img_url'],'img_id'=>$row2['img_id']);
         $thubmail2=$row2['img_url'];
@@ -99,7 +110,7 @@ while($run2 = mysqli_fetch_assoc($query2)){
 $set_id=$run2['set_id'];
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row4=mysqli_fetch_assoc($chk2))
   {
   $color2[]=str_replace('_',' ',$row4['color']);
@@ -122,6 +133,17 @@ if(mysqli_num_rows($m_query2)>0)
 {
   $in_cart="No";
 }
+if($run2['disc_type']=='A')
+  {
+    $discc=$run2['disc'];
+  }elseif($run2['disc_type']=='P')
+  {
+    $discc=$run2['sale_price']*$run2['disc'];
+  }
+  else
+  {
+    $discc='0';
+  }
     $data2[] =array("id"=>$run2['id'],
                   "pid"=>$run2['pid'],
                   "feature_order"=>$run2['feature'],
@@ -143,7 +165,7 @@ if(mysqli_num_rows($m_query2)>0)
                   "color"=>$color2,
                   "size"=>$size2,
                   "set_qty"=>$qty2,
-                  "discount"=>($run2['disc_type']=='A'?($run2['disc']):($run2['sale_price']*$run2['disc'])),
+                  "discount"=>$discc,
                 "disc_type"=>$run2['disc_type'],
                   "brand"=>$run2['brand'],
                 "mrp"=>($run2['mrp']==null)?'0':$run2['mrp'],"in_cart"=>$in_cart
@@ -157,7 +179,7 @@ while($run3 = mysqli_fetch_assoc($query3)){
   $img_arr3=[];
   $color3=[];
   $qty3=0;
-  $img3=mysqli_query($con,"SELECT * FROM `prod_img` LEFT JOIN product ON product.img=prod_img.img_id WHERE product.id='$pid'");
+  $img3=mysqli_query($con,"SELECT * FROM `prod_img` LEFT JOIN product ON product.img=prod_img.img_id WHERE product.id='$pid' and prod_img.aid='$admin_id'");
   while ($row3=mysqli_fetch_assoc($img3)) {
     $img_arr3[] = array('img_url' =>$row3['img_url'],'img_id'=>$row3['img_id']);
     $thubmail3=$row3['img_url'];
@@ -166,7 +188,7 @@ while($run3 = mysqli_fetch_assoc($query3)){
 $set_id=$run3['set_id'];
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row5=mysqli_fetch_assoc($chk2))
   {
   $color3[]=str_replace('_',' ',$row5['color']);
@@ -189,6 +211,17 @@ if(mysqli_num_rows($m_query2)>0)
 {
   $in_cart="No";
 }
+  if($run3['disc_type']=='A')
+  {
+    $discc=$run3['disc'];
+  }elseif($run3['disc_type']=='P')
+  {
+    $discc=$run3['sale_price']*$run3['disc'];
+  }
+  else
+  {
+    $discc='0';
+  }
     $data3[] =array("design_no"=>$run3['design_no'],
                   "id"=>$run3['id'],
                   "aid"=>$run3['aid'],
@@ -196,7 +229,7 @@ if(mysqli_num_rows($m_query2)>0)
                   "item_name"=>$run3['item_name'],
                   "cat_id"=>$run3['cat_id'],
                   "sale_price"=>$run3['sale_price'],
-                  "discount"=>$run3['discount'],
+                  // "discount"=>$run3['discount'],
                   "tax"=>$run3['tax'],
                   "avail_qty"=>round($run3['avail_qty'],0),
                   "feature"=>$run3['feature'],
@@ -217,7 +250,7 @@ if(mysqli_num_rows($m_query2)>0)
                   "color"=>$color3,
                   "size"=>$size3,
                   "set_qty"=>$qty3,
-                  "discount"=>($run3['disc_type']=='A'?($run3['disc']):($run3['sale_price']*$run3['disc'])),
+                  "discount"=>$discc,
                 "disc_type"=>$run3['disc_type'],
                   "brand"=>$run3['brand'],
                 "mrp"=>($run3['mrp']==null)?'0':$run3['mrp'],"in_cart"=>$in_cart

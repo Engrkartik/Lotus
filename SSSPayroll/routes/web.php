@@ -201,6 +201,36 @@ Route::any('/edit-outdoor-entry','App\Http\Controllers\Newadmin\Leave_Con@editOu
 Route::any('/increment-report','App\Http\Controllers\Newadmin\Reports_Con@increment_report');
 Route::any('/ctc-report','App\Http\Controllers\Newadmin\Reports_Con@ctc_report');
 
+//company group in Newadmin/User controller 
 
+Route::any('/company-group','App\Http\Controllers\Newadmin\User@companyGroup');
+Route::any('/company-mapping','App\Http\Controllers\Newadmin\User@companyMapping');
+Route::any('/company','App\Http\Controllers\Newadmin\User@company');
+Route::any('/company-location','App\Http\Controllers\Newadmin\User@companyLocation');
+Route::any('/company-department','App\Http\Controllers\Newadmin\User@companyDepartment');
+Route::any('/sub-department','App\Http\Controllers\Newadmin\User@subDepartment');
+Route::any('/designation','App\Http\Controllers\Newadmin\User@designation');
+Route::any('/grade','App\Http\Controllers\Newadmin\User@grade');
 
+//create shift in Newadmin/User controller
 
+Route::any('/create-shift','App\Http\Controllers\Newadmin\User@createShift');
+
+//create leave/holiday in Newadmin/User controller
+
+Route::any('/create-leave','App\Http\Controllers\Newadmin\User@createLeave');
+
+Route::any('/create-holiday','App\Http\Controllers\Newadmin\User@createHoliday');
+
+// create roles & permissions and user management options
+
+Route::any('/create-roles','App\Http\Controllers\Newadmin\User@assignRoles');
+
+Route::any('/functional-role-master','App\Http\Controllers\Newadmin\User@functionalRole');
+
+Route::any('/user-administration','App\Http\Controllers\Newadmin\User@userAdministration');
+
+Route::any('/home2','App\Http\Controllers\Newadmin\User@homeNew');
+
+//new employee master 
+Route::any('/employee-master','App\Http\Controllers\Newadmin\Master@employeeMaster');

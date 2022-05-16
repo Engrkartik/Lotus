@@ -35,7 +35,12 @@ include('include/db.php');
                                 echo $item."<br>";
                                 // echo "UPDATE `product` SET `sale_price`='$values['SALERATE']',`mrp`='$values['MRP']',`tax`='$values['GSTPER']',`avail_qty`='$values['STOCKQTY']',`qty_ratio`='$values['QTYRATIO']' WHERE `item_name`='$item' AND aid='1' and status!='R'";
                                 // echo "UPDATE `product` SET `sale_price`='$sale_price',`mrp`='$mrp',`tax`='$tax',`avail_qty`='$avail_qty',`qty_ratio`='$qty_ratio' WHERE `item_name`='$item' AND aid='1' and status!='R'";
-                                $update=mysqli_query($con,"UPDATE `product` SET `sale_price`='$sale_price',`mrp`='$mrp',`tax`='$tax',`avail_qty`='$avail_qty',`qty_ratio`='$qty_ratio',`date`='$dj' WHERE `item_name`='$item' AND aid='1' and status!='R'");
+                                if($avail_qty>0)
+                                {
+                                  $update=mysqli_query($con,"UPDATE `product` SET `sale_price`='$sale_price',`mrp`='$mrp',`tax`='$tax',`avail_qty`='$avail_qty',`date`='$dj',`qty_ratio`='$qty_ratio' WHERE `item_name`='$item' AND aid='1' and status!='R'");
+                                }else {
+                                  $update=mysqli_query($con,"UPDATE `product` SET `sale_price`='$sale_price',`mrp`='$mrp',`tax`='$tax',`avail_qty`='$avail_qty',`date`='$dj',`status`='D',`qty_ratio`='$qty_ratio' WHERE `item_name`='$item' AND aid='1' and status!='R'");
+                                }
                                 echo $id;
                                 $chk=mysqli_query($con,"SELECT * FROM `set_details` WHERE pid='$id' AND aid='1'");
                                 if (mysqli_num_rows($chk)>1) {

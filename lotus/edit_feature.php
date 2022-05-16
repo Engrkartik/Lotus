@@ -38,7 +38,7 @@ include('include/header.php');
                         </tr>
                       </thead>
                       <?php 
-                          $fetch_cust = mysqli_query($con,"SELECT product_order.*, product.item_name,product.id as iid FROM `product_order` left JOIN product on product_order.pid = product.id WHERE product_order.feature != 0 and product_order.status='A' ORDER BY product_order.feature asc");
+                          $fetch_cust = mysqli_query($con,"SELECT product_order.*, product.item_name,product.id as iid FROM `product_order` left JOIN product on product_order.pid = product.id WHERE product_order.feature != 0 and product_order.status='A' and product.aid='$admin_id' ORDER BY product_order.feature asc");
 
                           while($row = mysqli_fetch_array($fetch_cust)){
                             $sn++;
@@ -52,7 +52,7 @@ include('include/header.php');
                         <select id="new_pid" class="form-control" onchange="product_change((this.value),'<?=$row["feature"]?>');">
                           <?php 
                           $prev='';
-                          $fetch_cust1 = mysqli_query($con,"SELECT product_order.*, product.item_name,product.feature as F,product.id as iid FROM `product` left JOIN product_order on product.id = product_order.pid WHERE product.feature = 'Y' group by product_order.pid ORDER BY product_order.feature asc");
+                          $fetch_cust1 = mysqli_query($con,"SELECT product_order.*, product.item_name,product.feature as F,product.id as iid FROM `product` left JOIN product_order on product.id = product_order.pid WHERE product.feature = 'Y' and product.aid='$admin_id' group by product_order.pid ORDER BY product_order.feature asc");
                           while($row1 = mysqli_fetch_array($fetch_cust1))
                             {
                            ?>

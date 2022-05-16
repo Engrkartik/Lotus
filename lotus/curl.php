@@ -25,7 +25,7 @@ $aid=$_POST['aid'];
                           {
                             $item=$values['ITEMNAME'];
                             $count=mysqli_query($con,"SELECT * FROM `product` WHERE `item_name`='$item' AND aid='1' and status!='R'");
-                            if(mysqli_num_rows($count)>0)
+                            if(mysqli_num_rows($count)>0 || $values['STOCKQTY']<1)
                               {
                    
                               }else{ echo '
@@ -39,9 +39,16 @@ $aid=$_POST['aid'];
                   echo '<option disabled="true" selected="selected" value="">Select Product</option>';
 
                   while ($values=mysqli_fetch_assoc($query)) {
+                    $item=$values['item_name'];
+                            $count=mysqli_query($con,"SELECT * FROM `product` WHERE `item_name`='$item' AND aid='2' and status!='R'");
+                            if(mysqli_num_rows($count)>0)
+                              {
+                   
+                              }else{
                     echo '
                       <option value="INCLUDED~'.$values['mrp'].'~'.$values['sale_price'].'~'.$values['avail_qty'].'~'.$values['tax'].'~'.$values['item_name'].'~'.$values['qtyratio'].'">'. $values['item_name'].'</option>
                       ';
                   }
+                }
                 }
 ?>

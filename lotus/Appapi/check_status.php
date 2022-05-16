@@ -20,7 +20,7 @@ if(mysqli_num_rows($chk)>0)
 {
 	$json = array(
       "status"=>false,
-      "active_status"=>$row['STATUS'],
+      "active_status"=>($row['STATUS']=='A')?true:false,
       "msg"=>"User Inactive"
     );
 }

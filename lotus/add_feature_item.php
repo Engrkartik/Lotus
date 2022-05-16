@@ -78,7 +78,7 @@ $type=$_GET['key'];
                      
                       <?php
                         // $query1=mysqli_query($con,"SELECT * FROM `product` where `aid`='$admin_id'");
-                        $query1=mysqli_query($con,"SELECT id, item_name FROM product WHERE id NOT IN (SELECT pid FROM product_order WHERE feature !=0 AND status = 'A') and status='A'");
+                        $query1=mysqli_query($con,"SELECT id, item_name FROM product WHERE id NOT IN (SELECT pid FROM product_order WHERE feature !=0 AND status = 'A') and status='A' and product.aid='$admin_id'");
                         while ($row1=mysqli_fetch_assoc($query1)) {
                           // $item1 = $row1['item_name'];
                       ?>

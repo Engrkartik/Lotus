@@ -44,10 +44,64 @@ class User extends Controller
         return view('newadmin/pages/admin/employees/employeeslist');
     }
 
-     public function permissions()
+    public function permissions()
     {
         return view('newadmin/pages/admin/permission');
     }
 
+   public function companyGroup()
+    {
+        return view('newadmin/pages/companygroup/companygroup');
+    }
+
+    public function companyMapping()
+    {
+        return view('newadmin/pages/companygroup/companyMapping');
+    }
+
+     public function company()
+     { 
+        return view('newadmin/pages/companygroup/company'); 
+    }
+
+    public function companyLocation()
+     { 
+        return view('newadmin/pages/companygroup/companyLocation'); 
+    }
+
+     public function companyDepartment()
+     { 
+        return view('newadmin/pages/companygroup/companyDepartment'); 
+    }
+
+    public function subDepartment()
+     { 
+        return view('newadmin/pages/companygroup/subDepartment');
+    }
+
+    public function designation()
+     { 
+        return view('newadmin/pages/companygroup/designation');
+    }
+
+    public function grade()
+     { 
+        return view('newadmin/pages/companygroup/grade');
+    }
+
+    public function createShift()
+    { 
+       return view('newadmin/pages/admin/master/create_shift');
+   }
+
+   public function createLeave()
+   { 
+      return view('newadmin/pages/admin/master/create_leave');
+  }
+
+  public function createHoliday()
+  { 
+     return view('newadmin/pages/admin/master/create_holiday');
+ }
     
 }

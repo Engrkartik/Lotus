@@ -273,7 +273,7 @@ function valid(str) {
 
                 if(res=="User Register.")
                 {
-                    loader.style.display='none';
+                    // loader.style.display='none';
                     window.location.href="cust.php";
                 }
             }
@@ -296,10 +296,7 @@ function dist(state) {
   });
 }
   ////////////////////////loader///////////////////////////////////////////////////
-$(window).load(function() {
-    // Animate loader off screen
-    $(".se-pre-con").fadeOut("slow");;
-  });
+
   /////////////////////////////////end loader////////////////////////////////////
 </script>
 <?php

@@ -75,11 +75,15 @@ $today=date('d-m-Y');
   <tr><td colspan="8"></td></tr>
     
                      <?php
-                      $chk=mysqli_query($con,"SELECT discount.id,discount.disc_id,COUNT(*) as item,discount.pid,discount.disc_type,discount.disc_name,discount.disc,DATE_FORMAT(discount.from_dt,'%d-%m-%Y') as from_dt,DATE_FORMAT(discount.to_dt,'%d-%m-%Y') as to_dt,discount.status FROM `discount` where discount.aid='$admin_id' group by disc_id order by id desc");
+                      $chk=mysqli_query($con,"SELECT discount.id,discount.disc_id,discount.pid,discount.disc_type,discount.disc_name,discount.disc,DATE_FORMAT(discount.from_dt,'%d-%m-%Y') as from_dt,DATE_FORMAT(discount.to_dt,'%d-%m-%Y') as to_dt,discount.status FROM `discount` where discount.aid='$admin_id' group by disc_id order by id desc");
 
                      while ($row=mysqli_fetch_assoc($chk)) {
     $sn++;
     $logo=$row["disc_type"];
+
+    $disc_id = $row['disc_id'];
+    $itemC=mysqli_query($con,"SELECT COUNT(*) as item FROM `discount` LEFT JOIN product ON product.id=discount.pid WHERE discount.`disc_id` = '$disc_id' AND product.status!='R' and discount.aid='$admin_id'");
+    $run=mysqli_fetch_assoc($itemC);
     ?>
    
     <tr>
@@ -90,7 +94,7 @@ $today=date('d-m-Y');
     <?php } elseif($logo=="A"){?>
     <td style="text-align: center;width: 135px;"><?php echo $row["disc"]."(₹)"?></td>
   <?php } ?>
-    <td style="text-align: center;width: 100px;"><?php echo $row["item"];?></td>
+    <td style="text-align: center;width: 100px;"><?php echo $run["item"];?></td>
     <td style="text-align: center;width: 130px;"><?php echo $row["from_dt"];?></td>
     <td style="text-align: center;width: 150px;"><?php echo $row["to_dt"];?></td>
     <td style="text-align: center;width: 150px;">

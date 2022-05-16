@@ -12,10 +12,12 @@ $run=mysqli_fetch_assoc($chk);
 $dis= $run['disc'];
 if($run['disc_type']=='P')
 {
-  $disc=($sale_price*$dis)." (₹)";
+//   $disc=($sale_price*$dis)." (₹)";
+$disc=$dis." (%)";
+
 }else
 {
-  $disc=$dis." (%)";
+  $disc=$dis." (₹)";
 }
 
 echo ($disc>0?$disc:'NA');

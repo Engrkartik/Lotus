@@ -5,7 +5,7 @@
 </head>
 <body>
 <h3>PRIVACY POLICY</h3>
-<h2>SYBER ADMIN APP</h2>
+<!-- <h2>SYBER ADMIN APP</h2> -->
 <i>Last updated [13/11/2020]</i>
 [SSS SYBER TECH PRIVATE LIMITED] (“We” or “us” or “our”) respects the privacy of our users
 (“user” or “you”). This Privacy Policy explains how we collect, use, disclose, and safeguard your

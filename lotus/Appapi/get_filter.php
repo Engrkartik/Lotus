@@ -15,44 +15,48 @@ $price_min=$_POST['price_min'];
 $price_max=$_POST['price_max'];
 $brand=$_POST['brand'];
 $cat_id=$_POST['cat_id'];
-$discount=$_POST['discount'];
+// $discount=$_POST['discount'];
 $size=$_POST['size'];
 $color=$_POST['color'];
 $fabric=$_POST['fabric'];
 $pattern=$_POST['pattern'];
 $ocassion=$_POST['oc'];
 $sleeve=$_POST['sleeve'];
+$asc_desc='';
 $asc_desc=$_POST['sort'];
 $prev=0;
 $data=[];
- $prev=0;
+$orderby='';
 if($asc_desc=="HTL")
 {
-  $orderby='ORDER BY product.sale_price DESC';
+  $orderby='ORDER BY product.sale_price - disc,product.id DESC';
 }elseif($asc_desc=="LTH")
 {
-  $orderby='ORDER BY product.sale_price ASC';
+  $orderby='ORDER BY product.sale_price - disc,product.id ASC';
 
 }else{
   $orderby='ORDER BY product.id DESC';
 
 }
-if(($cat_id!="") and ($discount!=""))
-{
-	$cat="and product.cat_id='$cat_id'";
-	$dis="product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and discount.from_dt<='$today' and discount.to_dt>='$today') and ";
-}elseif(($cat_id!="") and ($discount==""))
-{
-	$cat="and product.cat_id='$cat_id'";
-	$dis="";
-}elseif(($cat_id=="") and ($discount!=""))
-{
-	$cat="";
-	$dis="product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and discount.from_dt<='$today' and discount.to_dt>='$today') and ";
-}else{
-	$cat="";
-	$dis="";
-}
+$cat="and product.cat_id='$cat_id'";
+//$dis="product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and discount.from_dt<='$today' and discount.to_dt>='$today') and ";
+$dis="";
+// if(($cat_id!="") and ($discount!=""))
+// {
+// 	$cat="and product.cat_id='$cat_id'";
+// 	$dis="product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and discount.from_dt<='$today' and discount.to_dt>='$today') and ";
+// }elseif(($cat_id!="") and ($discount==""))
+// {
+// 	$cat="and product.cat_id='$cat_id'";
+// 	$dis="";
+// }elseif(($cat_id=="") and ($discount!=""))
+// {
+// 	$cat="";
+// 	$dis="product.id IN (SELECT pid FROM discount where aid='$admin_id' and discount.from_dt<='$today' and discount.to_dt>='$today' and discount.from_dt<='$today' and discount.to_dt>='$today') and ";
+// }else{
+// 	$cat="";
+// 	$dis="";
+// }
 if(($price_min>=0) and ($price_max<1) and ($brand=="") and ($size=="") and ($color=="") and ($fabric=="") and ($pattern=="") and ($ocassion=="") and ($sleeve=="") and ($type=="") )
 {
   $query=mysqli_query($con,"SELECT product.*,(SELECT disc FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc,(SELECT disc_type FROM discount where aid='$admin_id' and pid=product.id and discount.from_dt<='$today' and discount.to_dt>='$today') as disc_type,prod_img.img_url,category.title as cat_title  FROM `product` LEFT JOIN category ON category.id=product.cat_id LEFT JOIN prod_img on prod_img.img_id=product.img WHERE $dis product.aid='$admin_id' and product.status='A' $cat AND product.avail_qty>0 and product.sale_price>='$price_min' GROUP BY product.id $orderby");
@@ -66,10 +70,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -102,7 +106,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -142,10 +146,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -177,7 +181,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -218,10 +222,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -252,7 +256,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -296,10 +300,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -330,7 +334,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -375,10 +379,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -409,7 +413,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -457,10 +461,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -491,7 +495,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -547,10 +551,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -581,7 +585,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -638,10 +642,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -672,7 +676,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -738,10 +742,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -772,7 +776,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -850,9 +854,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -884,7 +888,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -975,9 +979,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -1009,7 +1013,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -1112,9 +1116,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -1146,7 +1150,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -1252,9 +1256,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -1286,7 +1290,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -1389,9 +1393,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -1423,7 +1427,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -1524,9 +1528,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -1558,7 +1562,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -1659,9 +1663,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -1693,7 +1697,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -1793,9 +1797,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -1827,7 +1831,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -1927,9 +1931,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -1961,7 +1965,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -2061,9 +2065,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -2095,7 +2099,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -2195,9 +2199,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -2229,7 +2233,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -2329,9 +2333,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -2363,7 +2367,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -2463,9 +2467,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -2497,7 +2501,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -2596,9 +2600,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -2630,7 +2634,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -2729,9 +2733,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -2763,7 +2767,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -2862,9 +2866,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -2896,7 +2900,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -2995,9 +2999,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -3029,7 +3033,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -3128,9 +3132,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -3162,7 +3166,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -3261,9 +3265,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -3295,7 +3299,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -3393,9 +3397,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -3427,7 +3431,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -3526,9 +3530,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -3560,7 +3564,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -3658,9 +3662,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -3692,7 +3696,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -3790,9 +3794,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -3824,7 +3828,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -3922,9 +3926,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -3956,7 +3960,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -4053,9 +4057,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -4087,7 +4091,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -4182,9 +4186,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -4216,7 +4220,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -4311,9 +4315,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -4345,7 +4349,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -4440,9 +4444,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -4474,7 +4478,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -4569,9 +4573,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -4603,7 +4607,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -4696,9 +4700,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -4730,7 +4734,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -4821,9 +4825,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -4855,7 +4859,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -4946,9 +4950,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -4980,7 +4984,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -5071,9 +5075,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -5105,7 +5109,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -5205,9 +5209,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -5239,7 +5243,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -5338,9 +5342,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -5372,7 +5376,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -5471,9 +5475,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -5505,7 +5509,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -5605,9 +5609,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -5639,7 +5643,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -5739,9 +5743,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -5773,7 +5777,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -5872,9 +5876,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -5906,7 +5910,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -6005,9 +6009,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -6039,7 +6043,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -6138,9 +6142,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -6172,7 +6176,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -6271,9 +6275,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -6305,7 +6309,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -6404,9 +6408,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -6438,7 +6442,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -6537,9 +6541,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -6571,7 +6575,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -6669,9 +6673,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -6703,7 +6707,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -6801,9 +6805,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -6835,7 +6839,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -6933,9 +6937,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -6967,7 +6971,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -7065,9 +7069,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7099,7 +7103,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -7197,9 +7201,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7231,7 +7235,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -7329,9 +7333,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7363,7 +7367,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -7461,9 +7465,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7495,7 +7499,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -7593,9 +7597,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7627,7 +7631,7 @@ if($prev==$pid)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -7673,10 +7677,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7707,7 +7711,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -7755,10 +7759,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7789,7 +7793,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -7845,10 +7849,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7879,7 +7883,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -7936,10 +7940,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -7970,7 +7974,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -8036,10 +8040,10 @@ while($row2=mysqli_fetch_assoc($img_query))
 }
 // $cid=$run['cid'];
 $pid=$run['id'];
-$set_id=$run['set_id'];$color_r=[];$size_r=0;$qty=0;
+$set_id=$run['set_id'];$color_r=[];$size_r='';$qty=0;
   // $pid=$row['pid'];
 
-  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+  $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8070,7 +8074,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -8148,9 +8152,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8182,7 +8186,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -8243,9 +8247,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8277,7 +8281,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -8329,9 +8333,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8363,7 +8367,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -8426,9 +8430,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8460,7 +8464,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -8534,9 +8538,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8568,7 +8572,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -8653,9 +8657,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8687,7 +8691,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -8783,9 +8787,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8817,7 +8821,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -8919,9 +8923,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -8953,7 +8957,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -9010,9 +9014,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9044,7 +9048,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -9098,9 +9102,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9132,7 +9136,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -9196,9 +9200,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9230,7 +9234,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -9305,9 +9309,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9339,7 +9343,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -9427,9 +9431,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9461,7 +9465,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -9561,9 +9565,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9595,7 +9599,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -9655,9 +9659,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9689,7 +9693,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -9747,9 +9751,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9781,7 +9785,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -9854,9 +9858,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -9888,7 +9892,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -9974,9 +9978,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10008,7 +10012,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -10106,9 +10110,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10140,7 +10144,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -10200,9 +10204,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10234,7 +10238,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -10300,9 +10304,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10334,7 +10338,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -10412,9 +10416,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10446,7 +10450,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -10537,9 +10541,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10571,7 +10575,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -10633,9 +10637,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10667,7 +10671,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -10736,9 +10740,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10770,7 +10774,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -10852,9 +10856,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10886,7 +10890,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -10949,9 +10953,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -10983,7 +10987,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -11056,9 +11060,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -11090,7 +11094,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -11146,9 +11150,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -11180,7 +11184,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,
@@ -11225,9 +11229,9 @@ while($row2=mysqli_fetch_assoc($img_query))
 $pid=$run['id'];
 $set_id=$run['set_id'];
 $color_r=[];
-$size_r=0;
+$size_r='';
 $qty=0;
- $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid'");
+ $chk2=mysqli_query($con,"SELECT * FROM set_details WHERE set_details.set_id='$set_id' and set_details.pid='$pid' and aid='$admin_id'");
   while($row=mysqli_fetch_assoc($chk2))
   {
   $color_r[]=str_replace('_',' ',$row['color']);
@@ -11259,7 +11263,7 @@ if(mysqli_num_rows($m_query2)>0)
                 "title"=>$run['cat_title'],
                 "item_name"=>$run['title'],
                 "sale_price"=>$run['sale_price'],
-               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])),
+               "discount"=>($run['disc_type']=='A'?($run['disc']):($run['sale_price']*$run['disc'])/100),
                 "tax"=>$run['tax'],
                 "avail_qty"=>round($run['avail_qty'],0),
                 "img"=>$img,

@@ -157,7 +157,7 @@ $today=date('Y-m-d');
                      <td><?php echo $row['firm_name'];?></td>
                      <td><?php echo $row['mobile'];?></td>
                      <td><?php echo $row['quantity'];?></td>
-                     <td><?php echo round($row['amount'],0).".00";?></td>
+                     <td><?php echo round($row['amount'],2);?></td>
                      <td id="new_rem"><textarea onfocusout="edit_rem('<?=$sn?>','<?=$row["id"]?>')" rows="2"><?php echo $row['remark'];?></textarea></td>
 
                      <td>

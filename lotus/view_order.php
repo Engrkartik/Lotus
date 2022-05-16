@@ -2,7 +2,7 @@
 <?php
 include('include/header.php');
 $oid=$_GET['id'];
-$query1 = mysqli_query($con,"SELECT * FROM `manage_order` left JOIN company_reg on company_reg.id = manage_order.cid where manage_order.order_id = '$oid'");
+$query1 = mysqli_query($con,"SELECT * FROM `manage_order` left JOIN company_reg on company_reg.id = manage_order.cid where manage_order.order_id = '$oid' and aid='$admin_id'");
 $row1 = mysqli_fetch_assoc($query1);
 
         // $id = $row1['id'];
@@ -36,15 +36,20 @@ $row1 = mysqli_fetch_assoc($query1);
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-4">
-                        <img src="dist/img/wow_lotus2.png" style="width: 45%;">
+                        <img src="<?=$_SESSION['logo_url']?>" style="width: 45%;">
                     </div>
                     <div class="col-md-4">
                     <div class="align-center" style="text-align: center;color: red;font-size:20pt;display:block; font-family: Verdana, Arial, Helvetica, sans-serif;width:100%;font-weight:bold;vertical-align: middle;margin-top: 20px;">ORDER FORM    
                     </div>
                 </div>
                     <div class="col-md-4">
+                        <?php
+                        if ($_SESSION['admin_id']=='2') {
+                            
+                        }else {
+                        ?>
                         <img src="dist/img/nak (1).png" style="width: 50%;float: right;margin-top: 15px;">
-                        
+                        <?php }?>
                     </div>
                 </div>
             </div>
@@ -225,12 +230,12 @@ $row1 = mysqli_fetch_assoc($query1);
                             <tbody>
                             <?php 
 
-                                $query = mysqli_query($con,"SELECT * from `detail_order` left JOIN product on product.id=detail_order.design_no where `order_id` = '$oid'");
+                                $query = mysqli_query($con,"SELECT * from `detail_order` left JOIN product on product.id=detail_order.design_no where `order_id` = '$oid' and detail_order.`aid`='$admin_id'");
                                 while($run = mysqli_fetch_assoc($query)){
                                     $sn++;
                                     $remark = $run['remark'];
                                     $set_id=$run['set_id'];
-                                    $set=mysqli_query($con,"SELECT size,color,qty FROM `set_details` WHERE set_id='$set_id'");
+                                    $set=mysqli_query($con,"SELECT size,color,qty FROM `set_details` WHERE set_id='$set_id' and `aid`='$admin_id'");
                                     $row=mysqli_fetch_assoc($set);
                                     
                             ?>
@@ -262,40 +267,40 @@ $row1 = mysqli_fetch_assoc($query1);
                                     </td>
                                     <td style="">
                                         <div style="text-align:center;">
-                                            <?php echo round(($run['price']*($run['qty']*$run['packing'])),0).".00"; ?>
+                                            <?php echo round(($run['price']*($run['qty']*$run['packing'])),2); ?>
                                         </div>
                                     </td>
                                     <td style="">
                                         <div style="text-align:center;">
-                                            <?php echo round($run['discount'],0).".00"; ?>
+                                            <?php echo round($run['discount'],2); ?>
                                         </div>
                                     </td>
 
                                     <td style="">
                                         <div>
-                                            <?php echo round(($run['price']-$run['discount']),0).".00"; ?>
+                                            <?php echo round(($run['price']-$run['discount']),2); ?>
                                         </div>
                                     </td>
 
                                     <td style="">
                                         <div>
-                                            <?php echo round((($run['price']-$run['discount'])*($run['packing']*$run['qty'])),0).".00"; ?>
+                                            <?php echo round((($run['price']-$run['discount'])*($run['packing']*$run['qty'])),2); ?>
                                         </div>
                                     </td>
 
                                     <td style="">
                                         <div>
-                                            <?php echo round($run['tax'],0).".00"; ?>
+                                            <?php echo round($run['tax'],2); ?>
                                         </div>
                                     </td>
                                     <td style="">
                                         <div>
-                                            <?php echo round(((($run['price']-$run['discount'])*($run['packing']*$run['qty']))*($run['tax']/100)),0).".00"; ?>
+                                            <?php echo round(((($run['price']-$run['discount'])*($run['packing']*$run['qty']))*($run['tax']/100)),2); ?>
                                         </div>
                                     </td><td style="">
                                         <div>
-                                            <?php echo round(((($run['price']-$run['discount'])*($run['packing']*$run['qty']))+((($run['price']-$run['discount'])*($run['packing']*$run['qty']))*($run['tax']/100))),0).".00";
-                                            $t_amt=round(((($run['price']-$run['discount'])*($run['packing']*$run['qty']))+((($run['price']-$run['discount'])*($run['packing']*$run['qty']))*($run['tax']/100))),0)+$t_amt ?>
+                                            <?php echo round(((($run['price']-$run['discount'])*($run['packing']*$run['qty']))+((($run['price']-$run['discount'])*($run['packing']*$run['qty']))*($run['tax']/100))),2);
+                                            $t_amt=round(((($run['price']-$run['discount'])*($run['packing']*$run['qty']))+((($run['price']-$run['discount'])*($run['packing']*$run['qty']))*($run['tax']/100))),2)+$t_amt ?>
                                         </div>
                                     </td>
                                 </tr>
@@ -336,7 +341,7 @@ $row1 = mysqli_fetch_assoc($query1);
                                     </td>
                                     <td style="width: 8%;">
                                         <div>
-                                            <?php echo $t_amt.".00"; ?>
+                                            <?php echo $t_amt; ?>
                                         </div>
                                     </td>
                                    
@@ -427,5 +432,5 @@ $row1 = mysqli_fetch_assoc($query1);
 </script>
 </html> 
   <?php
-include('include/footer.php');
+// include('include/footer.php');
 ?>

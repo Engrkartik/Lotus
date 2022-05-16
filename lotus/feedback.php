@@ -81,7 +81,7 @@ include('include/header.php');
                     </tr>
                  </thead>
                       <?php 
-                        $fetch_cust = mysqli_query($con,"SELECT company_reg.*,feedback.msg,feedback.id as fid,feedback.rating FROM `feedback` LEFT JOIN company_reg on feedback.cid = company_reg.id");
+                        $fetch_cust = mysqli_query($con,"SELECT company_reg.*,feedback.msg,feedback.id as fid,feedback.rating FROM `feedback` LEFT JOIN company_reg on feedback.cid = company_reg.id where company_reg.aid='$admin_id' and feedback.aid='$admin_id'");
                           while($row = mysqli_fetch_array($fetch_cust)){
                             $sn++;
                             $rating = $row['rating'];

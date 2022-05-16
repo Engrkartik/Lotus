@@ -20,6 +20,7 @@ All rights reserved.
 </script>
 <script type="text/javascript" src="{{ asset('public/jsnew/app.js') }} "></script>
 <script type="text/javascript" src="{{ asset('public/jsnew/custom.js') }} "></script>
+<script type="text/javascript" src="{{ asset('public/jsnew/chart.js') }} "></script>
 
 
 <!-- new js for select 2-->

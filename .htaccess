@@ -1,0 +1,13 @@
+Options +FollowSymLinks -MultiViews
+RewriteEngine on
+#RewriteBase /
+RewriteRule ^SSSDemo(/.*|)$ /lotus/$1 [L,NC]
+RewriteRule ^b2b(/.*|)$ /quickWebsite/b2b_admin [L,NC]
+RewriteRule ^b2c(/.*|)$ /quickWebsite/b2c_admin [L,NC]
+#RewriteRule ^(/.*|)$ /b2c/public [L,NC]
+#RewriteCond %{HTTP_HOST} !^www.bechobazar.com
+#RewriteCond %{HTTP_HOST} ^([^.]+).bechobazar.com
+#RewriteRule ^$ /check.php?name=%1 [L]
+RewriteRule ^$ /quickWebsite/b2c/public [L]
+
+

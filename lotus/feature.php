@@ -86,7 +86,7 @@ include('include/header.php');
                     </tr>
                  </thead>
                       <?php 
-                          $fetch_cust = mysqli_query($con,"SELECT product_order.*, product.item_name FROM `product_order` left JOIN product on product_order.pid = product.id WHERE product_order.feature != 0 and product_order.status='A' and product.status='A' ORDER BY product_order.feature asc");
+                          $fetch_cust = mysqli_query($con,"SELECT DISTINCT(product.item_name) as item_name,product_order.*,product.aid FROM `product_order` left JOIN product on product_order.pid = product.id LEFT JOIN company_reg ON company_reg.aid=product.aid WHERE product_order.feature != 0 and product_order.status='A' and product.status='A' AND product.aid='$admin_id' ORDER BY product_order.feature asc");
                           while($row = mysqli_fetch_array($fetch_cust)){
                             $sn++;
                             

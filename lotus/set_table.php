@@ -38,6 +38,7 @@ $size=$_POST['size'];
 $new_size=json_decode($size);
 $length= sizeof($new_color);
 $length_size= sizeof($new_size);
+$sum_q=0;
 
 echo '<table class="table table-bordered" style="border:2px solid black;">
 	<thead>
@@ -57,9 +58,8 @@ for ($i=0; $i <$length ; $i++) {
 		<td>'.$cc.'</td><td>';
 // for ($j=0; $j <$length_size ; $j++) { 
 		echo $new_size[0];
-		$ss=$new_size[0];
-		$query=mysqli_query($con,"SELECT * FROM `sizemaster` WHERE size_name='$ss'");
-		$run=mysqli_fetch_assoc($query);
+		
+		$qty=0;
 		if($_POST['admin']!='2')
 		{
 		if($length==1)
@@ -71,19 +71,22 @@ for ($i=0; $i <$length ; $i++) {
 			$cond="";
 		}
 	}else {
+		$ss=$new_size[0];
+		$query=mysqli_query($con,"SELECT * FROM `sizemaster` WHERE size_name='$ss'");
+		$run=mysqli_fetch_assoc($query);
 		$qty=$run['qty'];
 	}
 		$sum_q=$sum_q+$qty;
 	// }
 	if($qty<2){
 	echo '</td><td>
-    <input type="number" id="sum_qty" readonly value='.$qty.' min="0"/ name="set_qty[]" onchange="sum()" '.$cond.'>   </td>
+    <input type="number" id="sum_qty" value='.$qty.' min="0" name="set_qty[]" onchange="sum()" '.$cond.'>   </td>
 		<td>'.$wsp.'/-</td>
 
 	</tr>';
 	}else{
 	echo '</td><td>
-    <input type="number" id="sum_qty" readonly value='.$qty.' min="0"/ name="set_qty[]" onchange="sum()" onkeydown="return false" '.$cond.'>   </td>
+    <input type="number" id="sum_qty" value='.$qty.' min="0" name="set_qty[]" onchange="sum()" onkeydown="return false" '.$cond.'>   </td>
 		<td>'.$wsp.'/-</td>
 
 	</tr>';

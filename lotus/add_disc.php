@@ -8,7 +8,7 @@ $disc_id=$_POST['disc_id'];
 // $item=$_POST['item'];
 $disc=$_POST['disc'];
 $disc_name=$_POST['disc_name'];
-$del=mysqli_query($con,"SELECT * FROM `discount` WHERE disc_name='$disc_name'");
+$del=mysqli_query($con,"SELECT * FROM `discount` WHERE disc_name='$disc_name' and aid='$admin_id'");
 if(mysqli_num_rows($del)>0)
 {
 echo 2;
@@ -30,7 +30,7 @@ $tid=$_SESSION['t_id'];
 			$verify=mysqli_query($con,"SELECT * FROM `disc_tran` WHERE aid='$admin_id' and t_id='$tid'");
 			if(mysqli_num_rows($verify)>0)
 			{
-				$disc_chk=mysqli_query($con,"SELECT * FROM `discount` order by disc_id desc limit 1");
+				$disc_chk=mysqli_query($con,"SELECT * FROM `discount` where aid='$admin_id' order by disc_id desc limit 1");
 $d_row=mysqli_fetch_assoc($disc_chk);
 $disc_row=$d_row['disc_id']+1;
 
@@ -45,12 +45,12 @@ $insert=mysqli_query($con,"INSERT INTO `discount`(`disc_id`,`aid`,`pid`, `disc_n
 }
 
 }else{
-	$insert=mysqli_query($con,"UPDATE `discount` SET `disc_name`='$disc_name',`disc_type`='$disc_type',`disc`='$disc',`from_dt`='$from_dt',`to_dt`='$to_dt' WHERE disc_id='$disc_id'");
+	$insert=mysqli_query($con,"UPDATE `discount` SET `disc_name`='$disc_name',`disc_type`='$disc_type',`disc`='$disc',`from_dt`='$from_dt',`to_dt`='$to_dt' WHERE disc_id='$disc_id'  and aid='$admin_id'");
 
 }
 
 if($insert){
-	$query=mysqli_query($con,"DELETE FROM `disc_tran` WHERE t_id='$tid'");
+	$query=mysqli_query($con,"DELETE FROM `disc_tran` WHERE t_id='$tid'  and aid='$admin_id'");
 
 unset($_SESSION['t_id']);
 	echo 0;
@@ -78,21 +78,21 @@ $tid=$_SESSION['t_id'];
 			$verify=mysqli_query($con,"SELECT * FROM `disc_tran` WHERE aid='$admin_id' and t_id='$tid'");
 			if(mysqli_num_rows($verify)>0)
 			{
-				$disc_chk=mysqli_query($con,"SELECT * FROM `discount` order by disc_id desc limit 1");
+				$disc_chk=mysqli_query($con,"SELECT * FROM `discount` where aid='$admin_id' order by disc_id desc limit 1");
 $d_row=mysqli_fetch_assoc($disc_chk);
 $disc_row=$d_row['disc_id']+1;
 
-$del=mysqli_query($con,"DELETE FROM `discount` WHERE disc_id='$disc_id'");
+$del=mysqli_query($con,"DELETE FROM `discount` WHERE disc_id='$disc_id'  and aid='$admin_id'");
 
 while($row=mysqli_fetch_assoc($verify))
 {
 $item=$row['prod'];
 $cat=$row['cat'];
-$find_data = mysqli_query($con,"SELECT * FROM product WHERE id = '$item'");
+$find_data = mysqli_query($con,"SELECT * FROM product WHERE id = '$item' and aid='$admin_id'");
 	$getD = mysqli_fetch_assoc($find_data);
 	$item_name= $getD['item_name'];
 
-	$check1 = mysqli_query($con,"SELECT * FROM discount WHERE ((from_dt <= '$from_dt' AND to_dt >= '$from_dt') OR (from_dt <= '$to_dt' AND to_dt >= '$to_dt')) and pid = '$item'");
+	$check1 = mysqli_query($con,"SELECT * FROM discount WHERE ((DATE_FORMAT(discount.from_dt,'%d-%m-%Y') <= '$from_dt' AND DATE_FORMAT(discount.to_dt,'%d-%m-%Y') >= '$from_dt') OR (DATE_FORMAT(discount.from_dt,'%d-%m-%Y') <= '$to_dt' AND DATE_FORMAT(discount.to_dt,'%d-%m-%Y') >= '$to_dt')) and pid = '$item' and aid='$admin_id'");
 	$count_chk = mysqli_num_rows($check1);
 	$count=$count+$count_chk;
 	if($count>0)
@@ -116,12 +116,12 @@ $insert=mysqli_query($con,"INSERT INTO `discount`(`disc_id`,`aid`,`pid`, `disc_n
 
 
 }else{
-	$insert=mysqli_query($con,"UPDATE `discount` SET `disc_name`='$disc_name',`disc_type`='$disc_type',`disc`='$disc',`from_dt`='$from_dt',`to_dt`='$to_dt' WHERE disc_id='$disc_id'");
+	$insert=mysqli_query($con,"UPDATE `discount` SET `disc_name`='$disc_name',`disc_type`='$disc_type',`disc`='$disc',`from_dt`='$from_dt',`to_dt`='$to_dt' WHERE disc_id='$disc_id' and aid='$admin_id'");
 
 }
 
 if($insert){
-	$query=mysqli_query($con,"DELETE FROM `disc_tran` WHERE t_id='$tid'");
+	$query=mysqli_query($con,"DELETE FROM `disc_tran` WHERE t_id='$tid' and aid='$admin_id'");
 
 unset($_SESSION['t_id']);
 	echo 0;
@@ -144,7 +144,7 @@ $to_dt=$_POST['to_dt'];
 $from_dt=$_POST['from_dt'];
 $tid=$_SESSION['t_id'];
 // $split=explode('~', $prod);
-$disc_chk=mysqli_query($con,"SELECT * FROM `discount` order by disc_id desc limit 1");
+$disc_chk=mysqli_query($con,"SELECT * FROM `discount` where aid='$admin_id' order by disc_id desc limit 1");
 $d_row=mysqli_fetch_assoc($disc_chk);
 $disc_row=$d_row['disc_id']+1;
 
@@ -156,11 +156,11 @@ while($row=mysqli_fetch_assoc($verify))
 	$item=$row['prod'];
 	$cat=$row['cat'];
 
-	$find_data = mysqli_query($con,"SELECT * FROM product WHERE id = '$item'");
+	$find_data = mysqli_query($con,"SELECT * FROM product WHERE id = '$item' and aid='$admin_id'");
 	$getD = mysqli_fetch_assoc($find_data);
 	$item_name= $getD['item_name'];
 
-	$check1 = mysqli_query($con,"SELECT * FROM discount WHERE ((from_dt <= '$from_dt' AND to_dt >= '$from_dt') OR (from_dt <= '$to_dt' AND to_dt >= '$to_dt')) and pid = '$item'");
+	$check1 = mysqli_query($con,"SELECT * FROM discount WHERE ((from_dt <= '$from_dt' AND to_dt >= '$from_dt') OR (from_dt <= '$to_dt' AND to_dt >= '$to_dt')) and pid = '$item' and aid='$admin_id'");
 	$count_chk = mysqli_num_rows($check1);
 	$count=$count+$count_chk;
 	if($count>0)
@@ -185,7 +185,7 @@ while($row=mysqli_fetch_assoc($verify))
 // a:if($count==0){
 if($insert){
 	echo 0;
-	$query=mysqli_query($con,"DELETE FROM `disc_tran` WHERE t_id='$tid'");
+	$query=mysqli_query($con,"DELETE FROM `disc_tran` WHERE t_id='$tid' and aid='$admin_id'");
 unset($_SESSION['t_id']);
 
 }else{
@@ -200,7 +200,7 @@ a:if($count>0){
 if($type=="deldata"){
 
 	$del = $_POST['e1'];
-	$delete = mysqli_query($con,"DELETE FROM `discount` WHERE `pname` = '$del'");
+	$delete = mysqli_query($con,"DELETE FROM `discount` WHERE `pname` = '$del' and aid='$admin_id'");
 
 	if($delete){
 		echo "Success";
@@ -218,7 +218,7 @@ $length_att= sizeof($new_att);
 $admin=$_POST['admin'];
 
 $trans_id=$_SESSION['t_id'];
-mysqli_query($con,"DELETE FROM `disc_tran` WHERE t_id='$trans_id'");
+mysqli_query($con,"DELETE FROM `disc_tran` WHERE t_id='$trans_id' and aid='$admin_id'");
 		for ($i=0; $i <$length_att ; $i++) { 
 			$split=explode('~', $new_att[$i]);
 			$verify=mysqli_query($con,"SELECT * FROM `disc_tran` WHERE aid='$admin' and cat='$split[0]' and prod='$split[1]'");
@@ -401,7 +401,7 @@ echo '<div class="col-md-12" style="width:100%;"><div class="row" style="border:
 if($type=="delete1")
 {
 	$did=$_POST['d_id'];
-	$delete1=mysqli_query($con,"DELETE FROM `discount` WHERE id='$did'");
+	$delete1=mysqli_query($con,"DELETE FROM `discount` WHERE id='$did' and aid='$admin_id'");
 }
 
 if($type=="delete2")
@@ -411,7 +411,7 @@ if($type=="delete2")
 	$trans_id=$_POST['t_id'];
 	$aid=$_POST['aid'];
 
-	$delete2=mysqli_query($con,"DELETE FROM `disc_tran` WHERE prod='$pid'");
+	$delete2=mysqli_query($con,"DELETE FROM `disc_tran` WHERE prod='$pid' and aid='$admin_id'");
 	$delete1=mysqli_query($con,"DELETE FROM `discount` WHERE disc_id='$did' and pid='$pid'");
 echo '<div class="col-md-12" style="width:100%;"><div class="row" style="border:1px solid black;"><table class="table table-bordered table-responsive" style="border-collapse: collapse;">
 	<thead><tr><th>Category</th><th colspan="20">Products</th>
@@ -437,7 +437,7 @@ if($type=="delete")
 	$admin=$_POST['admin'];
 	$trans_id=$_POST['tid'];
 
-	$delete2=mysqli_query($con,"DELETE FROM `disc_tran` WHERE prod='$pid'");
+	$delete2=mysqli_query($con,"DELETE FROM `disc_tran` WHERE prod='$pid' and aid='$admin_id'");
 	// $delete1=mysqli_query($con,"DELETE FROM `discount` WHERE disc_id='$did' and pid='$pid'");
 	echo '<div class="col-md-12" style="width:100%;"><div class="row" style="border:1px solid black;"><table class="table table-bordered table-responsive" style="border-collapse: collapse;">
 	<thead><tr><th>Category</th><th colspan="20">Products</th>
@@ -460,7 +460,7 @@ if($type=="delete")
 if($type=="refresh")
 {
 	$admin_id=$_POST['admin_id'];
-	$query=mysqli_query($con,"SELECT product.*,category.title FROM `product` LEFT JOIN category on category.id=product.cat_id WHERE product.id NOT IN (SELECT prod FROM disc_tran) and product.status='A' and product.aid='$admin_id' ORDER BY product.`id` desc");
+	$query=mysqli_query($con,"SELECT product.*,category.title FROM `product` LEFT JOIN category on category.id=product.cat_id WHERE product.id NOT IN (SELECT prod FROM disc_tran) and product.status!='R' and product.aid='$admin_id' ORDER BY product.`id` desc");
                   
                         echo '<select class="form-control" id="item" onchange="pushRules()" onclick="refreshV('.$admin_id.')">
                           <option value="00" selected="selected">Select Design</option>

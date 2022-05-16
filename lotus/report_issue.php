@@ -75,13 +75,14 @@ include('include/header.php');
                           <th>Customer Name</th>
                           <th>Issue Type</th>
                           <th>Issue</th>
-                          <th>Issue Image</th>
                           <th>Date</th>
+                          <th>Issue Image</th>
+
                           
                     </tr>
                  </thead>
                       <?php 
-                        $fetch_cust = mysqli_query($con,"SELECT report_issue.*,company_reg.FIRM_NAME,company_reg.OWNER_NAME,issue_img.img_url FROM `report_issue` LEFT JOIN company_reg ON company_reg.id=report_issue.c_id LEFT JOIN issue_img ON issue_img.img_id=report_issue.img_id WHERE report_issue.aid='$admin_id' and company_reg.id=issue_img.cid order by report_issue.id desc");
+                        $fetch_cust = mysqli_query($con,"SELECT report_issue.*,company_reg.FIRM_NAME,company_reg.OWNER_NAME FROM `report_issue` LEFT JOIN company_reg ON company_reg.id=report_issue.c_id  WHERE report_issue.aid='$admin_id' order by report_issue.id DESC");
                           while($row = mysqli_fetch_array($fetch_cust)){
                             $sn++;
                             
@@ -91,61 +92,109 @@ include('include/header.php');
                         <td><?=$sn?></td>
                         <td><?=$row['FIRM_NAME']?></td>
                         <td><?=$row['OWNER_NAME']?></td>
-                        <td><?=$row['issue_type']?></td>
+                        <td><?php
+                        $type=json_decode($row['issue_type']);
+                        for ($i=0; $i <sizeof($type) ; $i++) { 
+                          echo $type[$i]."<br>";
+                        }
+                        ?></td>
+                        
                         <td><textarea class="form-control" rows="2" readonly=""><?=$row['issue']?></textarea></td>
-                        <td style="width: 20%;"><img src="<?=$row['img_url']?>" onclick="imagezoom('<?=$row['img_id']?>')" id="<?=$row['img_id']?>" style="width: 30%;height: 50px;"></td>
                         <td><?php $time = strtotime($row['date']);
                         $newformat = date('d-m-Y',$time);
                         echo $newformat;
                         ?>
                           
                         </td>
+                        <td><button class="btn btn-primary" type="button" data-toggle="modal" data-target="#exampleModal_<?=$row['id']?>">View Images</button>
+                       
+                        </td>
+                        
                       </tr>
+  <div class="modal fade" id="exampleModal_<?=$row['id']?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Issue Images</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+        <?php
+          $img_id=$row['img_id'];
+          $fetch_cust2 = mysqli_query($con,"SELECT issue_img.* From issue_img where issue_img.img_id='$img_id' and aid='$admin_id'");
+          while($run=mysqli_fetch_assoc($fetch_cust2))
+          {
+            ?>
+            <div class="col-md-2" style="border: 1px solid lightgray;margin:5px;box-shadow:5px 5px 5px 5px lightgray;">
+            <a href="#" data-toggle="modal" data-target="#exampleModal2" onclick="modal_value('exampleModal2_<?=$run['id']?>','<?=$run['img_url']?>')"><img src="<?=$run['img_url']?>" id="<?=$run['id']?>" style="width: 100%;height: 100%;"></a>
+            </div>          
+          <?php  }?>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal2 -->
+
+
                     </tbody>
                       <?php } ?>
                   </table>
               </div>
-                          <div id="imagezoom" class="modal1">
-  <span class="close1 close">&times;</span>
-  <img class="modal-content1" id="img01">
-  <div id="caption1"></div>
-</div>
+
               <!-- /////////////////////////////////////////// -->
           
               <!-- /.card-body -->
             </div>
             <!-- /.card -->
           </div>
+  <!-- <div id="imagezoom" class="modal1">
+  <span class="close1 close" style="color:white !important;">&times;</span>
+  <img class="modal-content1" id="img01">
+  <div id="caption1"></div>
+</div> -->
+<div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+          <img id="img_show" src="" style="width: 100%;height: 100%;">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
         </div>
 <script type="text/javascript">
-  
- function imagezoom(img_id) {
-  // body...
-var modal = document.getElementById("imagezoom");
-// alert(img_id);
-// Get the image and insert it inside the modal - use its "alt" text as a caption
-var img = document.getElementById(img_id);
-var modalImg = document.getElementById("img01");
-var captionText = document.getElementById("caption");
-img.onclick = function(){
-  modal.style.display = "block";
-  modalImg.src = this.src;
-  captionText.innerHTML = this.alt;
-}
 
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("close")[0];
 
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() { 
-  modal.style.display = "none";
-}
-}
+  function modal_value(modal1,value) {
+    // console.log(value);
+    // var data=JSON.parse(value);
+    document.getElementById('img_show').src=value;
+    // document.getElementById('chng').id=modal;
+  }
+
   ////////////////////////loader///////////////////////////////////////////////////
-$(window).load(function() {
-    // Animate loader off screen
-    $(".se-pre-con").fadeOut("slow");;
-  });
+
   /////////////////////////////////end loader////////////////////////////////////
 </script>
 <?php

@@ -11,4 +11,6 @@ class testController extends Controller
     	$msg = "hello";
     	return response()->json(array('msg'=> $msg), 200);
     }
+
+   
 }

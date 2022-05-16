@@ -18,6 +18,10 @@ $gst_no=$con->real_escape_string($_POST['gst_no']);
 $mobile=$con->real_escape_string($_POST['mobile']);
 $alt_mobile=$con->real_escape_string($_POST['alt_mobile']);
 $admin_id=$con->real_escape_string($_POST['admin_id']);
+if(empty($admin_id))
+{
+  $admin_id='1';
+}
 // $aadhaar=$con->real_escape_string($_POST['aadhaar']);
 // $pan=$con->real_escape_string($_POST['pan']);
 

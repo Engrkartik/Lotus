@@ -62,16 +62,23 @@
 							</div>
 						
 							<!-- An element to toggle between password visibility -->
-							<div class="form-group">
-								<!-- An element to toggle between password visibility -->
-								<input type="checkbox" onclick="myFunction()">&nbsp;Show Password
-							</div>
+							<!-- <div class="form-group">
+								
+								<label>Show Password</label>
+								<input type="checkbox" onclick="myFunction()">
+							</div> -->
+							<div class="col-sm-8">
+                                <div class="form-group">
+                                <label>Show Password</label>
+                                <input style="width:39%;" type="checkbox" onclick="myFunction()">
+                                </div>
+                                </div>
 							
 							<div class="col-sm-12">
 								<div class="form-group text-center">
 									<div class="row">
 										<div class="col-6">
-											<button class="btn btn-primary login-btn">Login</button>
+											<button class="btn btn-primary login-btn" style="width: 180px;">Login</button>
 										</div>
 										<div class="col-6">
 											<button type="reset" class="btn btn-primary cancel-btn"

@@ -141,7 +141,7 @@ $tomo = date("Y-m-d", time() + 86400);
                               <input type="file" id="file" class="form-control" value="Upload" multiple="" >
                             </div>  -->
                           <?php 
-                            $get=mysqli_query($con,"SELECT * FROM `banner` WHERE title = 'Video Banner' and status = 'A'");
+                            $get=mysqli_query($con,"SELECT * FROM `banner` WHERE title = 'Video Banner' and status = 'A' and aid='$admin_id'");
                             $fetch_count = mysqli_num_rows($get);
 
                               if($fetch_count<1){
@@ -193,7 +193,8 @@ $tomo = date("Y-m-d", time() + 86400);
                                   </tr>
                                 </thead>
                                 <?php
-                                  $chk1=mysqli_query($con,"SELECT discount.id,discount.disc_id,COUNT(*) as item,discount.pid,discount.disc_type,discount.disc_name,discount.disc,DATE_FORMAT(discount.from_dt,'%d-%m-%Y') as from_dt,DATE_FORMAT(discount.to_dt,'%d-%m-%Y') as to_dt,discount.status FROM `discount` where discount.aid='1' AND ('$today' BETWEEN from_dt AND to_dt OR from_dt = '$tomo') and ap != 'A' group by disc_id order by id desc");
+                                  // $chk1=mysqli_query($con,"SELECT discount.id,discount.disc_id,COUNT(*) as item,discount.pid,discount.disc_type,discount.disc_name,discount.disc,DATE_FORMAT(discount.from_dt,'%d-%m-%Y') as from_dt,DATE_FORMAT(discount.to_dt,'%d-%m-%Y') as to_dt,discount.status FROM `discount` where discount.aid='$admin_id' AND ('$today' BETWEEN from_dt AND to_dt OR from_dt = '$tomo') and ap != 'A' group by disc_id order by id desc");
+                                  $chk1=mysqli_query($con,"SELECT discount.id,discount.disc_id,COUNT(*) as item,discount.pid,discount.disc_type,discount.disc_name,discount.disc,DATE_FORMAT(discount.from_dt,'%d-%m-%Y') as from_dt,DATE_FORMAT(discount.to_dt,'%d-%m-%Y') as to_dt,discount.status FROM `discount` where discount.aid='$admin_id' AND ('$today' BETWEEN from_dt AND to_dt) OR (from_dt = '$tomo') and ap != 'A' group by disc_id order by id desc");
                                  while ($row1=mysqli_fetch_assoc($chk1)) {
                                   $snn++;
                                   $logo=$row1["disc_name"];

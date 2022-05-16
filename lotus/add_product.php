@@ -191,7 +191,7 @@ input[type=number]::-webkit-outer-spin-button {
                   <div class="form-group">
                     <div class="field" >
                       <label>Product Images</label><label style="color: red">*</label>
-                      <input type="file" class="form-control" id="files" name="files[]" onchange="store_img()" multiple  />
+                      <input type="file" class="form-control" id="files" name="files[]" multiple  />
                     </div>
                   </div>
                   </div>
@@ -777,6 +777,7 @@ var avail_qty=document.getElementById('qtyratio').value;
 		url:'set_table.php',
 		data:{'size':JSON.stringify(size),'color':JSON.stringify(color),'mrp':mrp,'wsp':wsp,'avail_qty':avail_qty},
 		success:function(res) {
+      console.log(res);
       document.getElementById('set_det').style.display="";
       document.getElementById('myTable').style.display="";
 			$('#myTable').html(res);
@@ -821,6 +822,7 @@ function final_data(img_id) {
 	var type="add";
 	var admin='<?=$admin_id?>';
   // alert(att);
+  console.log(JSON.stringify(set_qty));
   if(title=="")
   {
   loader.style.display='none';
@@ -857,7 +859,9 @@ function store_img() {
    }
 }
  function new1(){
-
+   store_img();
+info4();
+console.log(set_qty);
   prod = document.getElementById("new_id");
   if(prod.value == "") {
     alert("Please select Product");
@@ -876,11 +880,30 @@ function store_img() {
     brand.focus();
     return false;
 }
+wsp = document.getElementById("sale_price");
+  if(wsp.value == "00" || wsp.value==null) {
+    alert("Price should not be empty");
+    wsp.focus();
+    return false;
+}
 if(size[0] == null){
     alert("Create set First");
     btnfo.focus();
     return false;
   }
+  if(size.includes(null))
+  {
+    alert("Size should not be blank");
+    btnfo.focus();
+    return false;
+  }
+  if(set_qty.includes("0") || set_qty.includes(null))
+  {
+    alert("Quantity should not be zero");
+    btnfo.focus();
+    return false;
+  }
+  
  		var src=[];
         
         // alert(form_data);

@@ -203,8 +203,8 @@
                                         <div class="form-group">
                                             <div class="input-group time timepicker">
                                                 <input class="form-control" placeholder="HH:MM"
-                                                    name="grace_time" /><span
-                                                    class="input-group-append input-group-addon"><span
+                                                    name="grace_time" />
+                                                    <span class="input-group-append input-group-addon"><span
                                                         class="input-group-text"><i
                                                             class="fa fa-clock-o"></i></span></span>
                                             </div>

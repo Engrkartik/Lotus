@@ -6,13 +6,15 @@ $dj = date("Y-m-d");
 if ($_SERVER['REQUEST_METHOD'] == "POST"){
 
     $c_id = $_POST['cust_id'];
+    $aid = $_POST['aid'];
     $msg =$_POST['msg'];
     $remark = $_POST['remark'];
     $star = $_POST['star'];
 
     // if(!empty($c_id)){
-$query = mysqli_query($con,"INSERT INTO `feedback`( `cid`, `msg`, `date`, `status`, `remark`, `rating`) VALUES ('$c_id', '$msg','$dj','active','$remark','$star')");
-   
+$query = mysqli_query($con,"INSERT INTO `feedback`(`aid`, `cid`, `msg`, `date`, `status`, `remark`, `rating`) VALUES ('$aid','$c_id', '$msg','$dj','active','$remark','$star')");
+
+
 if($query){
 
   $json = array(

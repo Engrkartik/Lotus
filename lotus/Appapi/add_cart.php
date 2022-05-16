@@ -8,7 +8,7 @@ if($_SERVER['REQUEST_METHOD'] == "POST"){
 
 
 
-
+//test2
   
 $aid=$con->real_escape_string($_POST['admin_id']);
 $cust_id=$con->real_escape_string($_POST['cust_id']);
@@ -19,11 +19,14 @@ $qty=$con->real_escape_string($_POST['qty']);
 // $tax=$con->real_escape_string($_POST['tax']);
 // $price=$con->real_escape_string($_POST['price']);
 // $packing=$con->real_escape_string($_POST['packing']);
-$chk2=mysqli_query($con,"SELECT * FROM `set_details` WHERE set_id='$set_id'");
-$row=mysqli_fetch_assoc($chk2);
+$packing=0;
+$chk2=mysqli_query($con,"SELECT * FROM `set_details` WHERE set_id='$set_id' and aid='$aid'");
+while($row=mysqli_fetch_assoc($chk2))
+{
 $size=$row['size'];
 $color=$row['color'];
-$packing=$row['qty'];
+$packing+=$row['qty'];
+}
 $prod=mysqli_query($con,"SELECT * FROM `product` WHERE id='$pid'");
 $run=mysqli_fetch_assoc($prod);
 $tax=$run['tax'];

@@ -238,6 +238,7 @@ event.keyCode === 46 ? true : !isNaN(Number(event.key))">
         var first_name=document.getElementById('first_name').value;
         var last_name=document.getElementById('last_name').value;
         var mob_no=document.getElementById('mob_no').value;
+        var alt_mob=document.getElementById('alt_mob').value;
         var bus_type=document.getElementById('bus_type').value;
         var email_id=document.getElementById('email').value;
         var firm_name=document.getElementById('firm_name').value;
@@ -263,7 +264,7 @@ event.keyCode === 46 ? true : !isNaN(Number(event.key))">
     if(gst_no!="")
 {
     if (!gstinformat.test(gst_no)) {
-        loader.style.display='none';
+         loader.style.display='none';
 
         alert('Please Enter Valid GSTIN Number');
         // $(".gst_no").val('');
@@ -275,12 +276,12 @@ event.keyCode === 46 ? true : !isNaN(Number(event.key))">
        $.ajax({
             type:'POST',
             url:'save_data.php',
-            data:{'first_name':first_name,'last_name':last_name,'mob_no':mob_no,'email_id':email_id,'firm_name':firm_name,'address':address,'state':state,'city':city,'pin_code':pin_code,'gst_type':gst_type,'gst_no':gst_no,'bus_type':bus_type,'country':country,'type':type,'admin':admin,'district':district,'c_id':c_id,'alt_mob':alt_mob,'image':path},
+            data:{'first_name':first_name,'last_name':last_name,'mob_no':mob_no,'alt_no':alt_mob,'email_id':email_id,'firm_name':firm_name,'address':address,'state':state,'city':city,'pin_code':pin_code,'gst_type':gst_type,'gst_no':gst_no,'bus_type':bus_type,'country':country,'type':type,'admin':admin,'district':district,'c_id':c_id,'alt_mob':alt_mob,'image':path},
             success:function(res) {    
                 // alert(res);
                 if(res=="User Register.")
                 {
-                    loader.style.display='none';
+                     loader.style.display='none';
                     window.location.href="cust.php";
 
                 }else{
@@ -309,10 +310,10 @@ function dist(state) {
 }
 
   ////////////////////////loader///////////////////////////////////////////////////
-$(window).load(function() {
-    // Animate loader off screen
-    $(".se-pre-con").fadeOut("slow");;
-  });
+// $(window).load(function() {
+//     // Animate loader off screen
+//     $(".se-pre-con").fadeOut("slow");;
+//   });
   /////////////////////////////////end loader////////////////////////////////////
 </script>
           <?php

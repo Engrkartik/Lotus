@@ -39,7 +39,7 @@ include('include/header.php');
                         </tr>
                       </thead>
                        <?php 
-                          $fetch_cust = mysqli_query($con,"SELECT product_order.*, product.item_name,product.id as iid FROM `product_order` left JOIN product on product_order.pid = product.id WHERE product_order.new != 0 and product_order.status='A' ORDER BY product_order.new asc");
+                          $fetch_cust = mysqli_query($con,"SELECT product_order.*, product.item_name,product.id as iid FROM `product_order` left JOIN product on product_order.pid = product.id WHERE product_order.new != 0 and product_order.status='A' and product.aid='$admin_id' ORDER BY product_order.new asc");
 
                           while($row = mysqli_fetch_array($fetch_cust)){
                             $sn++;
@@ -53,7 +53,7 @@ include('include/header.php');
                         <td><select id="new_pid" class="form-control select" onchange="product_change((this.value),'<?=$row["new"]?>');">
                           <?php 
                           $prev='';
-                          $fetch_cust1 = mysqli_query($con,"SELECT product_order.*, product.item_name,product.new as N,product.id as iid FROM `product` left JOIN product_order on product.id = product_order.pid WHERE product.new = 'Y' group by product_order.pid ORDER BY product_order.new asc");
+                          $fetch_cust1 = mysqli_query($con,"SELECT product_order.*, product.item_name,product.new as N,product.id as iid FROM `product` left JOIN product_order on product.id = product_order.pid WHERE product.new = 'Y' and product.aid='$admin_id' group by product_order.pid ORDER BY product_order.new asc");
                           while($row1 = mysqli_fetch_array($fetch_cust1)){
                             ?>
                           <option value="<?=$row1['iid']?>" <?php if(($row1['N']=='Y') and ($row1['pid']==$row['iid'])){ echo 'selected="selected"';}?> ><?php echo $row1['item_name'];?></option>

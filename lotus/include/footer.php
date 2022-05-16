@@ -35,7 +35,7 @@
 
 <script type="text/javascript">
 	 ////////////////////////loader///////////////////////////////////////////////////
-$(window).load(function() {
+   $(document).ready(function () {
     // Animate loader off screen
     $(".se-pre-con").fadeOut("slow");;
   });

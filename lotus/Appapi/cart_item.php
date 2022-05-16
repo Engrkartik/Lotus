@@ -16,13 +16,13 @@ while ($row=mysqli_fetch_assoc($chk)) {
   $color=[];
   $size=[];
   $packing=0;
-  $colorr=mysqli_query($con,"SELECT color,size FROM `set_details` WHERE set_id='$set'");
+  $colorr=mysqli_query($con,"SELECT color,size,qty FROM `set_details` WHERE set_id='$set' and aid='$admin_id'");
 
   while($color_r=mysqli_fetch_assoc($colorr)) {
     
 
     $color[]=str_replace('_', ' ',$color_r['color']);
-    $packing=$packing+1;
+    $packing+=$color_r['qty'];
    $size=$color_r['size'];
 
 
@@ -37,7 +37,7 @@ while ($row=mysqli_fetch_assoc($chk)) {
   "qty" => $row['qty'],
   "tax" => $row['tax'],
   "price" => $row['sale_price'],
-  "packing" => $row['packing']*$packing,
+  "packing" => $packing,
   "stock" => $row['stock'],
   "img" => $row['img'],
   "date" => $row['date'],

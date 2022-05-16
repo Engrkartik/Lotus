@@ -101,7 +101,7 @@ $ddd=date('Y-m-d');
   {
   $cat_id=$chk_r['id'];
   // echo $admin;
-  $query = mysqli_query($con,"SELECT product.* FROM `product` WHERE cat_id = '$cat_id' and status='A'");
+  $query = mysqli_query($con,"SELECT product.* FROM `product` WHERE cat_id = '$cat_id' and status!='R'");
   if(mysqli_num_rows($query)>0){
   ?><br><label><?php echo $chk_r["title"];?>&nbsp;<label style="margin-left: 20px;margin-top: -3px;" class="GFG"><b>SELECT ALL</b>&nbsp;&nbsp;<input type="checkbox" class="<?=preg_replace('/\s+/', '_',$chk_r['title'])?>" onclick="check('<?=preg_replace('/\s+/', '_',$chk_r['title'])?>')"></label><br>
   <!-- <div class="row"> -->
@@ -151,7 +151,7 @@ $ddd=date('Y-m-d');
                       <div class="form-group">
                         <label>Product Name</label><label style="color: red">*</label>
                         <?php 
-                     $query=mysqli_query($con,"SELECT product.*,category.title FROM `product` LEFT JOIN category on category.id=product.cat_id where product.status='A' ORDER BY product.`id` ASC");
+                     $query=mysqli_query($con,"SELECT product.*,category.title FROM `product` LEFT JOIN category on category.id=product.cat_id where product.status!='R' ORDER BY product.`id` ASC");
                         ?>
                         <select class="form-control" id="item" onchange="pushRules()" onclick="refreshV('<?=$admin_id?>')">
                           <option value="00">Select Design</option>

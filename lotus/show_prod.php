@@ -139,10 +139,11 @@ th[scope=row] {
                                         <?php
                                         if($run['disc_type']=='P')
                                         {
-                                          $disc=($row['sale_price']*$dis)." (₹)";
+                                          // $disc=($dis*100)."(%) (".($row['sale_price']*$dis)." (₹) )";
+                                          $disc=($dis*100)."(%)";
                                         }else
                                         {
-                                          $disc=$dis." (%)";
+                                          $disc=$dis." (₹)";
                                         }
                                         ?>
                                       <td style="width: 80px;text-align: center;"><?=($disc>0?$disc:'NA')?></td>
@@ -154,7 +155,7 @@ th[scope=row] {
                                         <button class="btn btn-primary" style="width: 80px;" onclick="act('D','<?=$row["id"]?>')">Active&nbsp;<i class="fa fa-angle-down"></i></button>
                                        <?php }else
                                        {?>
-                                        <button class="btn btn-danger" style="width: 80px;" onclick="act('A','<?=$row["id"]?>')">Remove&nbsp;<i class="fa fa-angle-down"></i></button>
+                                        <button class="btn btn-danger" style="width: 80px;" onclick="act('A','<?=$row["id"]?>')">InActive&nbsp;<i class="fa fa-angle-down"></i></button>
 
                                        <?php }?></td>
                                        <td style="display: none;"><?php if($row['status']=='A')

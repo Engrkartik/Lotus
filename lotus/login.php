@@ -20,7 +20,12 @@
 
 	<!-- Document Title
 	============================================= -->
-	<title>Login|LOTUS</title>
+	<?php
+	// if($_SERVER['PHP_SELF']==
+	$url=$_SERVER['REQUEST_URI'];
+	$split=explode("/",$url);
+	?>
+	<title>Login | <?php echo strtoupper($split[1]);?></title>
 
 </head>
 <style>
@@ -57,7 +62,14 @@ body {
 											<div class="row">
 												<!-- <div class="col-md-2"></div> -->
 												<div class="col-md-12" style="height: 70%;">
+												<?php
+												if($split[1]=='lotus')
+												{
+												?>
 													<img src="dist/img/wow_lotus2.png" style="width: 100%;height: 100%;">
+													<?php }else{?>
+													<img src="dist/img/sss syber-1 (2).png" style="width: 100%;height: 100%;">
+														<?php }?>
 												</div>
 												<!-- <div class="col-md-2"></div> -->
 
@@ -66,6 +78,7 @@ body {
 												<div class="card-body" style="padding: 40px;background-color: #d82782b5;box-shadow: 0 0 5px 5px #d827828f;">
 									<!-- <form id="login-form1" class="mb-0" action="#" method="post"> -->
 										<h3>Login to your Account</h3>
+										
 
 										<div class="row">
 											<div class="col-12 form-group">
